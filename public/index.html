@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>WorkAway International | Checkout</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    /* =========================================
+       GLOBAL & BRAND THEME (WORKAWAY INTERNATIONAL)
+       ========================================= */
+    :root {
+      --primary-blue: #003B95;
+      --secondary-blue: #00225D;
+      --accent-red: #E51B24;
+      --light-bg: #F4F7FA;
+      --border-color: #E2E8F0;
+      --text-dark: #1E293B;
+      --text-muted: #64748B;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 30px auto;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 59, 149, 0.08);
+      border: 1px solid rgba(0, 59, 149, 0.05);
+    }
+
+    /* =========================================
+       HEADER & LOGO
+       ========================================= */
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .brand-logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo-img {
+      max-width: 220px;
+      height: auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(229, 27, 36, 0.1);
+      color: var(--accent-red);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .header h2 {
+      color: var(--primary-blue);
+      margin: 5px 0 8px 0;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* =========================================
+       PAYMENT METHOD SELECTOR
+       ========================================= */
+    .payment-methods {
+      margin-bottom: 25px;
+    }
+
+    .payment-methods h3 {
+      margin-bottom: 14px;
+      font-size: 16px;
+      color: var(--secondary-blue);
+      font-weight: 700;
+    }
+
+    .payment-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .payment-option {
+      position: relative;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      background: #fff;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .payment-option:hover {
+      border-color: var(--primary-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 59, 149, 0.06);
+    }
+
+    .payment-option.selected {
+      border-color: var(--primary-blue);
+      background: #F0F5FF;
+    }
+
+    .payment-option.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: var(--primary-blue);
+      color: white;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .payment-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .payment-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .payment-name {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--secondary-blue);
+    }
+
+    .payment-description {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    /* =========================================
+       PAYMENT PANELS & FORM INPUTS
+       ========================================= */
+    .payment-panel {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .payment-panel.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--secondary-blue);
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary-blue);
+    }
+
+    .payment-info {
+      background: var(--light-bg);
+      border-left: 4px solid var(--accent-red);
+      border-radius: 6px;
+      padding: 14px;
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-dark);
+    }
+
+    .payment-info strong {
+      color: var(--secondary-blue);
+    }
+
+    /* =========================================
+       BUTTONS
+       ========================================= */
+    button[type="submit"],
+    #cardPayBtn,
+    #bankPayBtn,
+    #cashPayBtn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 12px rgba(225, 27, 36, 0.25);
+    }
+
+    button[type="submit"]:hover,
+    #cardPayBtn:hover,
+    #bankPayBtn:hover,
+    #cashPayBtn:hover {
+      background: #00225D;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--primary-blue);
+      background: white;
+      color: var(--primary-blue);
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #F0F5FF;
+    }
+
+    /* =========================================
+       CARD PAYMENT
+       ========================================= */
+    .card-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* =========================================
+       PAYMENT SUMMARY
+       ========================================= */
+    .payment-summary {
+      border-top: 2px dashed var(--border-color);
+      margin-top: 25px;
+      padding-top: 18px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .summary-total {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--secondary-blue);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .summary-total span:last-child {
+      color: var(--accent-red);
+    }
+
+    /* Helper utility classes */
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================
+       RESPONSIVE
+       ========================================= */
+    @media (max-width: 600px) {
+      .payment-options {
+        grid-template-columns: 1fr;
+      }
+      .card-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <!-- HEADER -->
+      <div class="header">
+        
+        <!-- WORKAWAY INTERNATIONAL LOGO -->
+        <div class="brand-logo-container">
+          <!-- Replace 'logo.png' with your actual image path if hosted locally -->
+          <img src="logo.png" alt="WorkAway International" class="brand-logo-img" onerror="this.style.display='none'; document.getElementById('svgLogo').style.display='block';">
+          
+          <!-- Fallback Inline SVG Logo -->
+          <svg id="svgLogo" style="display:none; max-width:220px;" viewBox="0 0 350 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M45 25 C30 25 20 40 20 60 C20 80 30 95 45 95 C60 95 70 80 70 60 C70 40 60 25 45 25 Z" fill="#003B95"/>
+            <path d="M15 70 C30 90 75 80 85 40" stroke="#E51B24" stroke-width="6" fill="none"/>
+            <text x="95" y="65" font-family="Arial, sans-serif" font-weight="900" font-size="32" fill="#003B95">WORK<tspan fill="#E51B24">AWAY</tspan></text>
+            <text x="96" y="88" font-family="Arial, sans-serif" font-weight="700" font-size="14" fill="#003B95" letter-spacing="4">INTERNATIONAL</text>
+          </svg>
+        </div>
+
+        <div class="badge">
+          Secure Stripe Payment
+        </div>
+
+        <h2>Checkout</h2>
+
+        <p>Select your preferred payment method below.</p>
+
+      </div>
+
+
+      <!-- PAYMENT METHODS -->
+      <div class="payment-methods">
+
+        <h3>Payment Method</h3>
+
+        <div class="payment-options">
+
+          <!-- M-PESA -->
+          <label class="payment-option selected" data-method="mpesa">
+            <input type="radio" name="paymentMethod" value="mpesa" checked>
+            <div class="payment-icon">📱</div>
+            <span class="payment-name">M-Pesa</span>
+            <span class="payment-description">Global</span>
+          </label>
+
+          <!-- CARD -->
+          <label class="payment-option" data-method="card">
+            <input type="radio" name="paymentMethod" value="card">
+            <div class="payment-icon">💳</div>
+            <span class="payment-name">Card</span>
+            <span class="payment-description">Debit /Credit</span>
+          </label>
+
+          <!-- BANK -->
+          <label class="payment-option" data-method="bank">
+            <input type="radio" name="paymentMethod" value="bank">
+            <div class="payment-icon">🏦</div>
+            <span class="payment-name">Bank Transfer</span>
+            <span class="payment-description">Direct bank payment</span>
+          </label>
+
+          <!-- APPLE PAY -->
+          <label class="payment-option" data-method="cash">
+            <input type="radio" name="paymentMethod" value="cash">
+            <div class="payment-icon">iOS</div>
+            <span class="payment-name">Apple Pay</span>
+            <span class="payment-description"></span>
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <!-- M-PESA PANEL -->
+      <div id="mpesaPanel" class="payment-panel active">
+        <form id="stkForm">
+          <div class="form-group">
+            <label for="phoneNumber">M-Pesa Phone Number</label>
+            <input type="tel" id="phoneNumber" placeholder="254712345678 or 0712345678" required />
+          </div>
+
+          <button type="submit" id="submitBtn">Pay Now</button>
+        </form>
+
+        <div id="statusAlert" class="status-alert hidden"></div>
+
+        <div id="queryContainer" class="hidden" style="margin-top: 12px;">
+          <button id="queryBtn" type="button" class="btn-secondary">Check Payment Status</button>
+        </div>
+      </div>
+
+
+      <!-- CARD PANEL -->
+      <div id="cardPanel" class="payment-panel">
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+        </div>
+
+        <div class="form-group">
+          <label for="cardName">Name on Card</label>
+          <input type="text" id="cardName" placeholder="John Doe">
+        </div>
+
+        <div class="card-row">
+          <div class="form-group">
+            <label for="expiry">Expiry Date</label>
+            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+          </div>
+
+          <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input type="password" id="cvv" placeholder="123" maxlength="4">
+          </div>
+        </div>
+
+        <button type="button" id="cardPayBtn">Pay with Card</button>
+
+        <div class="payment-info">
+          🔒 Card payments are securely processed by your payment provider.
+          <br>
+          <small></small>
+        </div>
+      </div>
+
+
+      <!-- BANK TRANSFER PANEL -->
+      <div id="bankPanel" class="payment-panel">
+        <div class="payment-info">
+          <strong>Bank Transfer Details</strong>
+          <br><br>
+          Bank: <strong>Example Bank</strong><br>
+          Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
+          Account Number: <strong>0000000000</strong><br>
+          <br><br>
+          Use your order/reference number as the payment reference.
+        </div>
+
+        <button type="button" id="bankPayBtn" style="margin-top:12px;">I Have Made the Transfer</button>
+      </div>
+
+
+      <!-- CASH PANEL -->
+      <div id="cashPanel" class="payment-panel">
+        <div class="payment-info">
+          Please ensure you have exact details ready.
+        </div>
+
+        <button type="button" id="cashPayBtn" style="margin-top:12px;">Confirm Payment</button>
+      </div>
+
+
+      <!-- ORDER SUMMARY -->
+      <div class="payment-summary">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>$ 300</span>
+        </div>
+
+        <div class="summary-row summary-total">
+          <span>Total</span>
+          <span>$ 300</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Original JavaScript preserved -->
+  <script src="/js/app.js"></script>
+
+  <!-- PAYMENT METHOD UI -->
+  <script>
+    const paymentOptions = document.querySelectorAll(".payment-option");
+
+    const paymentPanels = {
+      mpesa: document.getElementById("mpesaPanel"),
+      card: document.getElementById("cardPanel"),
+      bank: document.getElementById("bankPanel"),
+      cash: document.getElementById("cashPanel")
+    };
+
+    paymentOptions.forEach(option => {
+      option.addEventListener("click", function () {
+        paymentOptions.forEach(item => {
+          item.classList.remove("selected");
+        });
+
+        this.classList.add("selected");
+
+        const method = this.dataset.method;
+
+        Object.values(paymentPanels).forEach(panel => {
+          panel.classList.remove("active");
+        });
+
+        paymentPanels[method].classList.add("active");
+      });
+    });
+
+    /* CARD NUMBER FORMAT */
+    const cardNumber = document.getElementById("cardNumber");
+    if (cardNumber) {
+      cardNumber.addEventListener("input", function () {
+        let value = this.value.replace(/\D/g, "").substring(0, 16);
+        value = value.match(/.{1,4}/g)?.join(" ") || "";
+        this.value = value;
+      });
+    }
+
+    /* EXPIRY DATE FORMAT */
+    const expiry = document.getElementById("expiry");
+    if (expiry) {
+      expiry.addEventListener("input", function () {
+        let value = this.value.replace(/\D/g, "").substring(0, 4);
+        if (value.length >= 3) {
+          value = value.substring(0, 2) + "/" + value.substring(2);
+        }
+        this.value = value;
+      });
+    }
+
+    /* FRONT-END BUTTON HANDLERS */
+    document.getElementById("cardPayBtn").addEventListener("click", function () {
+      alert("Card payment selected. A real card payment gateway will be connected here.");
+    });
+
+    document.getElementById("bankPayBtn").addEventListener("click", function () {
+      alert("Bank transfer selected. Your order can now be marked for payment verification.");
+    });
+
+    document.getElementById("cashPayBtn").addEventListener("click", function () {
+      alert("Cash/On-arrival order selected.");
+    });
+  </script>
+
+</body>
+</html>
