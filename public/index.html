@@ -90,6 +90,79 @@
     }
 
     /* =========================================
+       PAYMENT BRAND ICONS
+       ========================================= */
+    .payment-brand-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin: 18px 0 24px;
+      flex-wrap: nowrap;
+    }
+
+    .payment-brand {
+      height: 42px;
+      min-width: 72px;
+      padding: 0 12px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+    }
+
+    /* M-PESA */
+    .mpesa-brand {
+      border: 1.5px solid #00A651;
+      color: #00A651;
+      gap: 4px;
+    }
+
+    .mpesa-symbol {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .mpesa-text {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    /* AMERICAN EXPRESS */
+    .amex-brand {
+      background: #006FCF;
+      border: 1.5px solid #006FCF;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .amex-text {
+      font-size: 8px;
+      line-height: 9px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+    }
+
+    /* VISA */
+    .visa-brand {
+      background: #ffffff;
+      border: 1.5px solid #D9DEE7;
+      color: #1434CB;
+    }
+
+    .visa-text {
+      font-size: 21px;
+      font-style: italic;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    /* =========================================
        PAYMENT METHOD SELECTOR
        ========================================= */
     .payment-methods {
@@ -317,11 +390,26 @@
        RESPONSIVE
        ========================================= */
     @media (max-width: 600px) {
+
       .payment-options {
         grid-template-columns: 1fr;
       }
+
       .card-row {
         grid-template-columns: 1fr;
+      }
+
+      .payment-brand-icons {
+        gap: 8px;
+      }
+
+      .payment-brand {
+        min-width: 65px;
+        padding: 0 8px;
+      }
+
+      .mpesa-text {
+        font-size: 10px;
       }
     }
   </style>
@@ -335,19 +423,61 @@
 
       <!-- HEADER -->
       <div class="header">
-        
+
         <!-- WORKAWAY INTERNATIONAL LOGO -->
         <div class="brand-logo-container">
-          <!-- Replace 'logo.png' with your actual image path if hosted locally -->
-          <img src="logo.png" alt="WorkAway International" class="brand-logo-img" onerror="this.style.display='none'; document.getElementById('svgLogo').style.display='block';">
-          
-          <!-- Fallback Inline SVG Logo -->
-          <svg id="svgLogo" style="display:none; max-width:220px;" viewBox="0 0 350 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M45 25 C30 25 20 40 20 60 C20 80 30 95 45 95 C60 95 70 80 70 60 C70 40 60 25 45 25 Z" fill="#003B95"/>
-            <path d="M15 70 C30 90 75 80 85 40" stroke="#E51B24" stroke-width="6" fill="none"/>
-            <text x="95" y="65" font-family="Arial, sans-serif" font-weight="900" font-size="32" fill="#003B95">WORK<tspan fill="#E51B24">AWAY</tspan></text>
-            <text x="96" y="88" font-family="Arial, sans-serif" font-weight="700" font-size="14" fill="#003B95" letter-spacing="4">INTERNATIONAL</text>
+
+          <img
+            src="logo.png"
+            alt="WorkAway International"
+            class="brand-logo-img"
+            onerror="this.style.display='none'; document.getElementById('svgLogo').style.display='block';"
+          >
+
+          <!-- FALLBACK INLINE SVG LOGO -->
+          <svg
+            id="svgLogo"
+            style="display:none; max-width:220px;"
+            viewBox="0 0 350 110"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M45 25 C30 25 20 40 20 60 C20 80 30 95 45 95 C60 95 70 80 70 60 C70 40 60 25 45 25 Z"
+              fill="#003B95"
+            />
+
+            <path
+              d="M15 70 C30 90 75 80 85 40"
+              stroke="#E51B24"
+              stroke-width="6"
+              fill="none"
+            />
+
+            <text
+              x="95"
+              y="65"
+              font-family="Arial, sans-serif"
+              font-weight="900"
+              font-size="32"
+              fill="#003B95"
+            >
+              WORK<tspan fill="#E51B24">AWAY</tspan>
+            </text>
+
+            <text
+              x="96"
+              y="88"
+              font-family="Arial, sans-serif"
+              font-weight="700"
+              font-size="14"
+              fill="#003B95"
+              letter-spacing="4"
+            >
+              INTERNATIONAL
+            </text>
           </svg>
+
         </div>
 
         <div class="badge">
@@ -358,10 +488,39 @@
 
         <p>Select your preferred payment method below.</p>
 
+
+        <!-- =========================================
+             PAYMENT BRAND ICONS
+             ========================================= -->
+        <div class="payment-brand-icons">
+
+          <!-- M-PESA -->
+          <div class="payment-brand mpesa-brand">
+            <span class="mpesa-symbol">M</span>
+            <span class="mpesa-text">M-PESA</span>
+          </div>
+
+          <!-- AMERICAN EXPRESS -->
+          <div class="payment-brand amex-brand">
+            <span class="amex-text">
+              AMERICAN<br>
+              EXPRESS
+            </span>
+          </div>
+
+          <!-- VISA -->
+          <div class="payment-brand visa-brand">
+            <span class="visa-text">VISA</span>
+          </div>
+
+        </div>
+
       </div>
 
 
-      <!-- PAYMENT METHODS -->
+      <!-- =========================================
+           PAYMENT METHODS
+           ========================================= -->
       <div class="payment-methods">
 
         <h3>Payment Method</h3>
@@ -370,34 +529,90 @@
 
           <!-- M-PESA -->
           <label class="payment-option selected" data-method="mpesa">
-            <input type="radio" name="paymentMethod" value="mpesa" checked>
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="mpesa"
+              checked
+            >
+
             <div class="payment-icon">📱</div>
-            <span class="payment-name">M-Pesa</span>
-            <span class="payment-description">Global</span>
+
+            <span class="payment-name">
+              M-Pesa
+            </span>
+
+            <span class="payment-description">
+              Global
+            </span>
+
           </label>
+
 
           <!-- CARD -->
           <label class="payment-option" data-method="card">
-            <input type="radio" name="paymentMethod" value="card">
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="card"
+            >
+
             <div class="payment-icon">💳</div>
-            <span class="payment-name">Card</span>
-            <span class="payment-description">Debit /Credit</span>
+
+            <span class="payment-name">
+              Card
+            </span>
+
+            <span class="payment-description">
+              Debit /Credit
+            </span>
+
           </label>
+
 
           <!-- BANK -->
           <label class="payment-option" data-method="bank">
-            <input type="radio" name="paymentMethod" value="bank">
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="bank"
+            >
+
             <div class="payment-icon">🏦</div>
-            <span class="payment-name">Bank Transfer</span>
-            <span class="payment-description">Direct bank payment</span>
+
+            <span class="payment-name">
+              Bank Transfer
+            </span>
+
+            <span class="payment-description">
+              Direct bank payment
+            </span>
+
           </label>
+
 
           <!-- APPLE PAY -->
           <label class="payment-option" data-method="cash">
-            <input type="radio" name="paymentMethod" value="cash">
-            <div class="payment-icon">iOS</div>
-            <span class="payment-name">Apple Pay</span>
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="cash"
+            >
+
+            <div class="payment-icon">
+              iOS
+            </div>
+
+            <span class="payment-name">
+              Apple Pay
+            </span>
+
             <span class="payment-description"></span>
+
           </label>
 
         </div>
@@ -405,96 +620,257 @@
       </div>
 
 
-      <!-- M-PESA PANEL -->
+      <!-- =========================================
+           M-PESA PANEL
+           ========================================= -->
       <div id="mpesaPanel" class="payment-panel active">
+
         <form id="stkForm">
+
           <div class="form-group">
-            <label for="phoneNumber">M-Pesa Phone Number</label>
-            <input type="tel" id="phoneNumber" placeholder="254712345678 or 0712345678" required />
+
+            <label for="phoneNumber">
+              M-Pesa Phone Number
+            </label>
+
+            <input
+              type="tel"
+              id="phoneNumber"
+              placeholder="254712345678 or 0712345678"
+              required
+            >
+
           </div>
 
-          <button type="submit" id="submitBtn">Pay Now</button>
+          <button
+            type="submit"
+            id="submitBtn"
+          >
+            Pay Now
+          </button>
+
         </form>
 
-        <div id="statusAlert" class="status-alert hidden"></div>
+        <div
+          id="statusAlert"
+          class="status-alert hidden"
+        ></div>
 
-        <div id="queryContainer" class="hidden" style="margin-top: 12px;">
-          <button id="queryBtn" type="button" class="btn-secondary">Check Payment Status</button>
+        <div
+          id="queryContainer"
+          class="hidden"
+          style="margin-top: 12px;"
+        >
+
+          <button
+            id="queryBtn"
+            type="button"
+            class="btn-secondary"
+          >
+            Check Payment Status
+          </button>
+
         </div>
+
       </div>
 
 
-      <!-- CARD PANEL -->
+      <!-- =========================================
+           CARD PANEL
+           ========================================= -->
       <div id="cardPanel" class="payment-panel">
-        <div class="form-group">
-          <label for="cardNumber">Card Number</label>
-          <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
-        </div>
 
         <div class="form-group">
-          <label for="cardName">Name on Card</label>
-          <input type="text" id="cardName" placeholder="John Doe">
+
+          <label for="cardNumber">
+            Card Number
+          </label>
+
+          <input
+            type="text"
+            id="cardNumber"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+          >
+
         </div>
+
+
+        <div class="form-group">
+
+          <label for="cardName">
+            Name on Card
+          </label>
+
+          <input
+            type="text"
+            id="cardName"
+            placeholder="John Doe"
+          >
+
+        </div>
+
 
         <div class="card-row">
-          <div class="form-group">
-            <label for="expiry">Expiry Date</label>
-            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
-          </div>
 
           <div class="form-group">
-            <label for="cvv">CVV</label>
-            <input type="password" id="cvv" placeholder="123" maxlength="4">
+
+            <label for="expiry">
+              Expiry Date
+            </label>
+
+            <input
+              type="text"
+              id="expiry"
+              placeholder="MM/YY"
+              maxlength="5"
+            >
+
           </div>
+
+
+          <div class="form-group">
+
+            <label for="cvv">
+              CVV
+            </label>
+
+            <input
+              type="password"
+              id="cvv"
+              placeholder="123"
+              maxlength="4"
+            >
+
+          </div>
+
         </div>
 
-        <button type="button" id="cardPayBtn">Pay with Card</button>
+
+        <button
+          type="button"
+          id="cardPayBtn"
+        >
+          Pay with Card
+        </button>
+
 
         <div class="payment-info">
+
           🔒 Card payments are securely processed by your payment provider.
+
           <br>
+
           <small></small>
+
         </div>
+
       </div>
 
 
-      <!-- BANK TRANSFER PANEL -->
+      <!-- =========================================
+           BANK TRANSFER PANEL
+           ========================================= -->
       <div id="bankPanel" class="payment-panel">
+
         <div class="payment-info">
-          <strong>Bank Transfer Details</strong>
+
+          <strong>
+            Bank Transfer Details
+          </strong>
+
           <br><br>
-          Bank: <strong>Example Bank</strong><br>
-          Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
-          Account Number: <strong>0000000000</strong><br>
+
+          Bank:
+          <strong>
+            Example Bank
+          </strong>
+
+          <br>
+
+          Account Name:
+          <strong>
+            WORKAWAY INTERNATIONAL
+          </strong>
+
+          <br>
+
+          Account Number:
+          <strong>
+            0000000000
+          </strong>
+
           <br><br>
+
           Use your order/reference number as the payment reference.
+
         </div>
 
-        <button type="button" id="bankPayBtn" style="margin-top:12px;">I Have Made the Transfer</button>
+
+        <button
+          type="button"
+          id="bankPayBtn"
+          style="margin-top:12px;"
+        >
+          I Have Made the Transfer
+        </button>
+
       </div>
 
 
-      <!-- CASH PANEL -->
+      <!-- =========================================
+           APPLE PAY PANEL
+           ========================================= -->
       <div id="cashPanel" class="payment-panel">
+
         <div class="payment-info">
+
           Please ensure you have exact details ready.
+
         </div>
 
-        <button type="button" id="cashPayBtn" style="margin-top:12px;">Confirm Payment</button>
+
+        <button
+          type="button"
+          id="cashPayBtn"
+          style="margin-top:12px;"
+        >
+          Confirm Payment
+        </button>
+
       </div>
 
 
-      <!-- ORDER SUMMARY -->
+      <!-- =========================================
+           ORDER SUMMARY
+           ========================================= -->
       <div class="payment-summary">
+
         <div class="summary-row">
-          <span>Subtotal</span>
-          <span>$ 300</span>
+
+          <span>
+            Subtotal
+          </span>
+
+          <span>
+            $ 300
+          </span>
+
         </div>
+
 
         <div class="summary-row summary-total">
-          <span>Total</span>
-          <span>$ 300</span>
+
+          <span>
+            Total
+          </span>
+
+          <span>
+            $ 300
+          </span>
+
         </div>
+
       </div>
 
     </div>
@@ -502,72 +878,170 @@
   </div>
 
 
-  <!-- Original JavaScript preserved -->
+  <!-- =========================================
+       ORIGINAL JAVASCRIPT
+       ========================================= -->
   <script src="/js/app.js"></script>
 
-  <!-- PAYMENT METHOD UI -->
+
+  <!-- =========================================
+       PAYMENT METHOD UI
+       ========================================= -->
   <script>
-    const paymentOptions = document.querySelectorAll(".payment-option");
+
+    const paymentOptions =
+      document.querySelectorAll(".payment-option");
+
 
     const paymentPanels = {
-      mpesa: document.getElementById("mpesaPanel"),
-      card: document.getElementById("cardPanel"),
-      bank: document.getElementById("bankPanel"),
-      cash: document.getElementById("cashPanel")
+
+      mpesa:
+        document.getElementById("mpesaPanel"),
+
+      card:
+        document.getElementById("cardPanel"),
+
+      bank:
+        document.getElementById("bankPanel"),
+
+      cash:
+        document.getElementById("cashPanel")
+
     };
 
+
     paymentOptions.forEach(option => {
+
       option.addEventListener("click", function () {
+
         paymentOptions.forEach(item => {
+
           item.classList.remove("selected");
+
         });
+
 
         this.classList.add("selected");
 
-        const method = this.dataset.method;
+
+        const method =
+          this.dataset.method;
+
 
         Object.values(paymentPanels).forEach(panel => {
+
           panel.classList.remove("active");
+
         });
 
+
         paymentPanels[method].classList.add("active");
+
       });
+
     });
 
-    /* CARD NUMBER FORMAT */
-    const cardNumber = document.getElementById("cardNumber");
+
+    /* =========================================
+       CARD NUMBER FORMAT
+       ========================================= */
+
+    const cardNumber =
+      document.getElementById("cardNumber");
+
+
     if (cardNumber) {
+
       cardNumber.addEventListener("input", function () {
-        let value = this.value.replace(/\D/g, "").substring(0, 16);
-        value = value.match(/.{1,4}/g)?.join(" ") || "";
+
+        let value =
+          this.value
+            .replace(/\D/g, "")
+            .substring(0, 16);
+
+
+        value =
+          value.match(/.{1,4}/g)?.join(" ") || "";
+
+
         this.value = value;
+
       });
+
     }
 
-    /* EXPIRY DATE FORMAT */
-    const expiry = document.getElementById("expiry");
+
+    /* =========================================
+       EXPIRY DATE FORMAT
+       ========================================= */
+
+    const expiry =
+      document.getElementById("expiry");
+
+
     if (expiry) {
+
       expiry.addEventListener("input", function () {
-        let value = this.value.replace(/\D/g, "").substring(0, 4);
+
+        let value =
+          this.value
+            .replace(/\D/g, "")
+            .substring(0, 4);
+
+
         if (value.length >= 3) {
-          value = value.substring(0, 2) + "/" + value.substring(2);
+
+          value =
+            value.substring(0, 2) +
+            "/" +
+            value.substring(2);
+
         }
+
+
         this.value = value;
+
       });
+
     }
 
-    /* FRONT-END BUTTON HANDLERS */
-    document.getElementById("cardPayBtn").addEventListener("click", function () {
-      alert("Card payment selected. A real card payment gateway will be connected here.");
-    });
 
-    document.getElementById("bankPayBtn").addEventListener("click", function () {
-      alert("Bank transfer selected. Your order can now be marked for payment verification.");
-    });
+    /* =========================================
+       FRONT-END BUTTON HANDLERS
+       ========================================= */
 
-    document.getElementById("cashPayBtn").addEventListener("click", function () {
-      alert("Cash/On-arrival order selected.");
-    });
+    document
+      .getElementById("cardPayBtn")
+      .addEventListener("click", function () {
+
+        alert(
+          "Card payment selected. A real card payment gateway will be connected here."
+        );
+
+      });
+
+
+    document
+      .getElementById("bankPayBtn")
+      .addEventListener("click", function () {
+
+        alert(
+          "Bank transfer selected. Your order can now be marked for payment verification."
+        );
+
+      });
+
+
+    document
+      .getElementById("cashPayBtn")
+      .addEventListener("click", function () {
+
+        alert(
+          "Cash/On-arrival order selected."
+        );
+
+      });
+
   </script>
 
 </body>
