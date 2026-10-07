@@ -1,18 +1,21 @@
 {
-  "name": "mpesa-stk-app",
+  "name": "workaway-international-payment",
   "version": "1.0.0",
-  "description": "Lipa na M-Pesa STK Push application",
+  "description": "WorkAway International M-Pesa STK Push payment application",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "vercel dev"
+  },
+  "engines": {
+    "node": "24.x"
   },
   "dependencies": {
-    "axios": "^1.6.8",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "axios": "^1.12.2",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0"
   },
   "devDependencies": {
-    "nodemon": "^1.14.10"
+    "vercel": "^48.0.0"
   }
 }
