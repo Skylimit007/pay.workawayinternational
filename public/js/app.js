@@ -1,15 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const stkForm = document.getElementById("stkForm");
-  const submitBtn = document.getElementById("submitBtn");
-  const statusAlert = document.getElementById("statusAlert");
-  const queryContainer = document.getElementById("queryContainer");
-  const queryBtn = document.getElementById("queryBtn");
+  const stkForm =
+    document.getElementById("stkForm");
+
+  const submitBtn =
+    document.getElementById("submitBtn");
+
+  const statusAlert =
+    document.getElementById("statusAlert");
+
+  const queryContainer =
+    document.getElementById(
+      "queryContainer"
+    );
+
+  const queryBtn =
+    document.getElementById(
+      "queryBtn"
+    );
 
   let checkoutRequestId = null;
 
-  function showAlert(message, type) {
-    statusAlert.innerText = message;
-    statusAlert.className = `status-alert ${type}`;
+  /*
+  |--------------------------------------------------------------------------
+  | ALERT
+  |--------------------------------------------------------------------------
+  */
+
+  function showAlert(
+    message,
+    type
+  ) {
+    if (!statusAlert) {
+      alert(message);
+      return;
+    }
+
+    statusAlert.innerText =
+      message;
+
+    statusAlert.className =
+      `status-alert ${type}`;
   }
 
   /*
@@ -18,161 +48,215 @@ document.addEventListener("DOMContentLoaded", () => {
   |--------------------------------------------------------------------------
   */
 
-  stkForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  if (stkForm) {
+    stkForm.addEventListener(
+      "submit",
+      async event => {
+        event.preventDefault();
 
-    const phoneNumber =
-      document.getElementById("phoneNumber").value.trim();
+        const phoneInput =
+          document.getElementById(
+            "phoneNumber"
+          );
 
-    if (!phoneNumber) {
-      showAlert(
-        "Please enter your M-Pesa phone number.",
-        "error"
-      );
+        if (!phoneInput) {
+          showAlert(
+            "Phone number field was not found.",
+            "error"
+          );
 
-      return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Sending Prompt...";
-
-    queryContainer.classList.add("hidden");
-
-    checkoutRequestId = null;
-
-    try {
-      const response = await fetch(
-        "/api/stkpush",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            phoneNumber
-          })
+          return;
         }
-      );
 
-      const result = await response.json();
+        const phoneNumber =
+          phoneInput.value.trim();
 
-      if (!response.ok || !result.success) {
-        throw new Error(
-          result.message ||
-          "Unable to initiate payment."
-        );
+        if (!phoneNumber) {
+          showAlert(
+            "Please enter your M-Pesa phone number.",
+            "error"
+          );
+
+          return;
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+
+          submitBtn.innerText =
+            "Sending Prompt...";
+        }
+
+        if (queryContainer) {
+          queryContainer.classList.add(
+            "hidden"
+          );
+        }
+
+        checkoutRequestId =
+          null;
+
+        try {
+          const response =
+            await fetch(
+              "/api/stkpush",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify({
+                    phoneNumber
+                  })
+              }
+            );
+
+          const result =
+            await response.json();
+
+          if (
+            !response.ok ||
+            !result.success
+          ) {
+            throw new Error(
+              result.message ||
+              "Unable to initiate payment."
+            );
+          }
+
+          checkoutRequestId =
+            result.checkoutRequestId;
+
+          showAlert(
+            result.message ||
+            "STK prompt sent. Enter your M-Pesa PIN.",
+            "info"
+          );
+
+          if (queryContainer) {
+            queryContainer.classList.remove(
+              "hidden"
+            );
+          }
+
+        } catch (error) {
+          console.error(
+            "[STK PUSH ERROR]",
+            error
+          );
+
+          showAlert(
+            error.message ||
+            "Network error sending payment prompt.",
+            "error"
+          );
+
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled =
+              false;
+
+            submitBtn.innerText =
+              "Pay Now";
+          }
+        }
       }
-
-      checkoutRequestId =
-        result.checkoutRequestId;
-
-      showAlert(
-        result.message ||
-        "STK prompt sent. Enter your M-Pesa PIN.",
-        "info"
-      );
-
-      queryContainer.classList.remove("hidden");
-
-    } catch (error) {
-      console.error(
-        "[STK PUSH FRONTEND ERROR]",
-        error
-      );
-
-      showAlert(
-        error.message ||
-        "Network error sending payment prompt.",
-        "error"
-      );
-
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Pay Now";
-    }
-  });
+    );
+  }
 
   /*
   |--------------------------------------------------------------------------
-  | QUERY PAYMENT
+  | PAYMENT STATUS
   |--------------------------------------------------------------------------
   */
 
-  queryBtn.addEventListener(
-    "click",
-    async () => {
-      if (!checkoutRequestId) {
-        showAlert(
-          "There is no payment transaction to check.",
-          "error"
-        );
-
-        return;
-      }
-
-      queryBtn.disabled = true;
-      queryBtn.innerText = "Checking...";
-
-      try {
-        const response = await fetch(
-          "/api/stkpush/query",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-              checkoutRequestId
-            })
-          }
-        );
-
-        const result =
-          await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            result.message ||
-            "Unable to check payment status."
-          );
-        }
-
-        if (result.success) {
+  if (queryBtn) {
+    queryBtn.addEventListener(
+      "click",
+      async () => {
+        if (!checkoutRequestId) {
           showAlert(
-            "Payment Completed Successfully!",
-            "success"
-          );
-        } else {
-          showAlert(
-            `Status: ${
-              result.resultDesc ||
-              "Payment is pending or was cancelled."
-            }`,
+            "There is no payment transaction to check.",
             "error"
           );
+
+          return;
         }
 
-      } catch (error) {
-        console.error(
-          "[PAYMENT QUERY ERROR]",
-          error
-        );
+        queryBtn.disabled =
+          true;
 
-        showAlert(
-          error.message ||
-          "Error checking transaction status.",
-          "error"
-        );
-
-      } finally {
-        queryBtn.disabled = false;
         queryBtn.innerText =
-          "Check Payment Status";
+          "Checking...";
+
+        try {
+          const response =
+            await fetch(
+              "/api/stkpush/query",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify({
+                    checkoutRequestId
+                  })
+              }
+            );
+
+          const result =
+            await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              result.message ||
+              "Unable to check payment status."
+            );
+          }
+
+          if (result.success) {
+            showAlert(
+              "Payment Completed Successfully!",
+              "success"
+            );
+          } else {
+            showAlert(
+              `Status: ${
+                result.resultDesc ||
+                "Payment is pending or was cancelled."
+              }`,
+              "error"
+            );
+          }
+
+        } catch (error) {
+          console.error(
+            "[PAYMENT QUERY ERROR]",
+            error
+          );
+
+          showAlert(
+            error.message ||
+            "Error checking transaction status.",
+            "error"
+          );
+
+        } finally {
+          queryBtn.disabled =
+            false;
+
+          queryBtn.innerText =
+            "Check Payment Status";
+        }
       }
-    }
-  );
+    );
+  }
 });
