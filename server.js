@@ -1,214 +1,550 @@
-const express = require('express');
-const axios = require('axios');
-const path = require('path');
-require('dotenv').config();
+const express = require("express");
+const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const ENV = process.env.MPESA_ENV || 'sandbox';
 
-// Base URL routing
-const BASE_URL = ENV === 'production'
-  ? 'https://api.safaricom.co.ke'
-  : 'https://sandbox.safaricom.co.ke';
+/*
+|--------------------------------------------------------------------------
+| CONFIGURATION
+|--------------------------------------------------------------------------
+*/
 
-// Fixed Amount Enforcement (KSH 35,000)
+const ENV = process.env.MPESA_ENV || "sandbox";
+
+const BASE_URL =
+  ENV === "production"
+    ? "https://api.safaricom.co.ke"
+    : "https://sandbox.safaricom.co.ke";
+
+/*
+|--------------------------------------------------------------------------
+| FIXED PAYMENT AMOUNT
+|--------------------------------------------------------------------------
+|
+| Current project is configured for KES 35,000.
+|
+*/
+
 const FIXED_AMOUNT = 35000;
 
-app.use(express.static(path.join(__dirname, 'public')));
+/*
+|--------------------------------------------------------------------------
+| MIDDLEWARE
+|--------------------------------------------------------------------------
+*/
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+/*
+|--------------------------------------------------------------------------
+| HEALTH CHECK
+|--------------------------------------------------------------------------
+*/
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "WorkAway International payment server is running.",
+    environment: ENV,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Middleware: OAuth2 Token Generation
-const generateToken = async (req, res, next) => {
+/*
+|--------------------------------------------------------------------------
+| M-PESA OAUTH TOKEN
+|--------------------------------------------------------------------------
+*/
+
+async function generateToken() {
   const consumerKey = process.env.MPESA_CONSUMER_KEY;
   const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
-  const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
 
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/oauth/v1/generate?grant_type=client_credentials`,
-      { headers: { Authorization: `Basic ${auth}` } }
+  if (!consumerKey || !consumerSecret) {
+    throw new Error(
+      "MPESA_CONSUMER_KEY or MPESA_CONSUMER_SECRET is missing."
     );
-    req.token = response.data.access_token;
-    next();
-  } catch (error) {
-    console.error('[TOKEN GENERATION ERROR]:', error.response?.data || error.message);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to generate OAuth token. Check Consumer Key and Secret.'
-    });
   }
-};
 
-// Helper: Safaricom Timestamp (YYYYMMDDHHmmss)
-const getTimestamp = () => {
+  const auth = Buffer.from(
+    `${consumerKey}:${consumerSecret}`
+  ).toString("base64");
+
+  const response = await axios.get(
+    `${BASE_URL}/oauth/v1/generate?grant_type=client_credentials`,
+    {
+      headers: {
+        Authorization: `Basic ${auth}`
+      },
+      timeout: 15000
+    }
+  );
+
+  if (!response.data || !response.data.access_token) {
+    throw new Error("Safaricom did not return an OAuth access token.");
+  }
+
+  return response.data.access_token;
+}
+
+/*
+|--------------------------------------------------------------------------
+| TIMESTAMP
+|--------------------------------------------------------------------------
+*/
+
+function getTimestamp() {
   const date = new Date();
+
   return (
     date.getFullYear().toString() +
-    String(date.getMonth() + 1).padStart(2, '0') +
-    String(date.getDate()).padStart(2, '0') +
-    String(date.getHours()).padStart(2, '0') +
-    String(date.getMinutes()).padStart(2, '0') +
-    String(date.getSeconds()).padStart(2, '0')
+    String(date.getMonth() + 1).padStart(2, "0") +
+    String(date.getDate()).padStart(2, "0") +
+    String(date.getHours()).padStart(2, "0") +
+    String(date.getMinutes()).padStart(2, "0") +
+    String(date.getSeconds()).padStart(2, "0")
   );
-};
+}
 
-// Helper: Base64 Password = Base64(ShortCode + Passkey + Timestamp)
-const getPassword = (shortCode, passkey, timestamp) => {
-  return Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
-};
+/*
+|--------------------------------------------------------------------------
+| M-PESA PASSWORD
+|--------------------------------------------------------------------------
+*/
 
-/**
- * Route: Trigger STK Push Prompt for Fixed $ 35,000
- * Sandbox Endpoint: https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
- */
-app.post('/api/stkpush', generateToken, async (req, res) => {
-  const { phoneNumber } = req.body;
+function getPassword(shortCode, passkey, timestamp) {
+  return Buffer.from(
+    `${shortCode}${passkey}${timestamp}`
+  ).toString("base64");
+}
 
-  if (!phoneNumber) {
-    return res.status(400).json({
-      success: false,
-      message: 'Phone number is required.'
-    });
+/*
+|--------------------------------------------------------------------------
+| PHONE NUMBER FORMATTER
+|--------------------------------------------------------------------------
+*/
+
+function formatPhoneNumber(phoneNumber) {
+  let phone = String(phoneNumber)
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/^\+/, "");
+
+  if (phone.startsWith("0")) {
+    phone = `254${phone.substring(1)}`;
   }
 
-  // Format phone number to 254XXXXXXXXX
-  let formattedPhone = phoneNumber.toString().trim().replace(/\+/g, '');
-  if (formattedPhone.startsWith('0')) {
-    formattedPhone = `254${formattedPhone.substring(1)}`;
+  if (phone.startsWith("7")) {
+    phone = `254${phone}`;
   }
 
-  const shortCode = process.env.MPESA_SHORTCODE || '174379';
-  const passkey = process.env.MPESA_PASSKEY || 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
-  const timestamp = getTimestamp();
-  const password = getPassword(shortCode, passkey, timestamp);
+  if (!/^254\d{9}$/.test(phone)) {
+    throw new Error(
+      "Invalid Kenyan phone number. Use 0712345678 or 254712345678."
+    );
+  }
 
-  const payload = {
-    BusinessShortCode: shortCode,
-    Password: password,
-    Timestamp: timestamp,
-    TransactionType: 'CustomerPayBillOnline',
-    Amount: FIXED_AMOUNT,
-    PartyA: formattedPhone,
-    PartyB: shortCode,
-    PhoneNumber: formattedPhone,
-    CallBackURL: process.env.MPESA_CALLBACK_URL,
-    AccountReference: 'SandboxTest35K',
-    TransactionDesc: 'Test Payment of $ 35000'
-  };
+  return phone;
+}
 
+/*
+|--------------------------------------------------------------------------
+| STK PUSH
+|--------------------------------------------------------------------------
+*/
+
+app.post("/api/stkpush", async (req, res) => {
   try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is required."
+      });
+    }
+
+    const formattedPhone = formatPhoneNumber(phoneNumber);
+
+    const shortCode = process.env.MPESA_SHORTCODE;
+    const passkey = process.env.MPESA_PASSKEY;
+    const callbackUrl = process.env.MPESA_CALLBACK_URL;
+
+    if (!shortCode) {
+      return res.status(500).json({
+        success: false,
+        message: "MPESA_SHORTCODE is not configured."
+      });
+    }
+
+    if (!passkey) {
+      return res.status(500).json({
+        success: false,
+        message: "MPESA_PASSKEY is not configured."
+      });
+    }
+
+    if (!callbackUrl) {
+      return res.status(500).json({
+        success: false,
+        message: "MPESA_CALLBACK_URL is not configured."
+      });
+    }
+
+    if (!callbackUrl.startsWith("https://")) {
+      return res.status(500).json({
+        success: false,
+        message: "MPESA_CALLBACK_URL must use HTTPS."
+      });
+    }
+
+    const token = await generateToken();
+
+    const timestamp = getTimestamp();
+
+    const password = getPassword(
+      shortCode,
+      passkey,
+      timestamp
+    );
+
+    const payload = {
+      BusinessShortCode: shortCode,
+      Password: password,
+      Timestamp: timestamp,
+
+      TransactionType: "CustomerPayBillOnline",
+
+      Amount: FIXED_AMOUNT,
+
+      PartyA: formattedPhone,
+
+      PartyB: shortCode,
+
+      PhoneNumber: formattedPhone,
+
+      CallBackURL: callbackUrl,
+
+      AccountReference: "WorkAwayInternational",
+
+      TransactionDesc: "WorkAway International Payment"
+    };
+
+    console.log("[STK REQUEST]", {
+      phone: formattedPhone,
+      amount: FIXED_AMOUNT,
+      environment: ENV
+    });
+
     const response = await axios.post(
       `${BASE_URL}/mpesa/stkpush/v1/processrequest`,
       payload,
       {
         headers: {
-          Authorization: `Bearer ${req.token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 30000
       }
     );
 
+    console.log("[STK RESPONSE]", response.data);
+
     return res.status(200).json({
       success: true,
-      message: `STK push prompt sent to ${formattedPhone}. Enter your M-Pesa PIN on your phone.`,
-      checkoutRequestId: response.data.CheckoutRequestID,
-      merchantRequestId: response.data.MerchantRequestID
+      message:
+        `STK push prompt sent to ${formattedPhone}. ` +
+        "Enter your M-Pesa PIN on your phone.",
+
+      checkoutRequestId:
+        response.data.CheckoutRequestID,
+
+      merchantRequestId:
+        response.data.MerchantRequestID,
+
+      responseCode:
+        response.data.ResponseCode,
+
+      customerMessage:
+        response.data.CustomerMessage
     });
+
   } catch (error) {
+    console.error(
+      "[STK PUSH ERROR]",
+      error.response?.data || error.message
+    );
+
     const mpesaError = error.response?.data;
-    console.error('[STK PUSH ERROR]:', mpesaError || error.message);
 
     return res.status(500).json({
       success: false,
-      message: mpesaError?.errorMessage || mpesaError?.responseDescription || 'Failed to trigger STK Push.',
-      details: mpesaError
+
+      message:
+        mpesaError?.errorMessage ||
+        mpesaError?.responseDescription ||
+        error.message ||
+        "Failed to trigger STK Push.",
+
+      details:
+        mpesaError || null
     });
   }
 });
 
-/**
- * Route: Query STK Push Status
- * Sandbox Endpoint: https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query
- */
-app.post('/api/stkpush/query', generateToken, async (req, res) => {
-  const { checkoutRequestId } = req.body;
+/*
+|--------------------------------------------------------------------------
+| STK PUSH QUERY
+|--------------------------------------------------------------------------
+*/
 
-  if (!checkoutRequestId) {
-    return res.status(400).json({ success: false, message: 'CheckoutRequestID required.' });
-  }
-
-  const shortCode = process.env.MPESA_SHORTCODE || '174379';
-  const passkey = process.env.MPESA_PASSKEY || 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
-  const timestamp = getTimestamp();
-  const password = getPassword(shortCode, passkey, timestamp);
-
-  const payload = {
-    BusinessShortCode: shortCode,
-    Password: password,
-    Timestamp: timestamp,
-    CheckoutRequestID: checkoutRequestId
-  };
-
+app.post("/api/stkpush/query", async (req, res) => {
   try {
+    const { checkoutRequestId } = req.body;
+
+    if (!checkoutRequestId) {
+      return res.status(400).json({
+        success: false,
+        message: "CheckoutRequestID is required."
+      });
+    }
+
+    const shortCode = process.env.MPESA_SHORTCODE;
+    const passkey = process.env.MPESA_PASSKEY;
+
+    if (!shortCode || !passkey) {
+      return res.status(500).json({
+        success: false,
+        message:
+          "M-Pesa shortcode or passkey is not configured."
+      });
+    }
+
+    const token = await generateToken();
+
+    const timestamp = getTimestamp();
+
+    const password = getPassword(
+      shortCode,
+      passkey,
+      timestamp
+    );
+
+    const payload = {
+      BusinessShortCode: shortCode,
+      Password: password,
+      Timestamp: timestamp,
+      CheckoutRequestID: checkoutRequestId
+    };
+
     const response = await axios.post(
       `${BASE_URL}/mpesa/stkpushquery/v1/query`,
       payload,
       {
         headers: {
-          Authorization: `Bearer ${req.token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 30000
       }
     );
 
+    console.log("[STK QUERY]", response.data);
+
+    const resultCode = String(
+      response.data.ResultCode
+    );
+
     return res.status(200).json({
-      success: response.data.ResultCode === '0',
-      resultCode: response.data.ResultCode,
-      resultDesc: response.data.ResultDesc,
-      data: response.data
+      success: resultCode === "0",
+
+      resultCode:
+        response.data.ResultCode,
+
+      resultDesc:
+        response.data.ResultDesc,
+
+      data:
+        response.data
     });
+
   } catch (error) {
-    console.error('[STK QUERY ERROR]:', error.response?.data || error.message);
+    console.error(
+      "[STK QUERY ERROR]",
+      error.response?.data || error.message
+    );
+
     return res.status(500).json({
       success: false,
-      message: error.response?.data?.errorMessage || 'Failed to query STK Push status.'
+
+      message:
+        error.response?.data?.errorMessage ||
+        error.response?.data?.ResultDesc ||
+        "Failed to query STK Push status.",
+
+      details:
+        error.response?.data || null
     });
   }
 });
 
-/**
- * Route: Callback Webhook Receiver
- */
-app.post('/api/mpesa/callback', (req, res) => {
-  const callbackData = req.body.Body?.stkCallback;
+/*
+|--------------------------------------------------------------------------
+| M-PESA CALLBACK
+|--------------------------------------------------------------------------
+*/
 
-  if (!callbackData) {
-    return res.status(400).send('Invalid callback format');
+app.post("/api/mpesa/callback", (req, res) => {
+  try {
+    console.log(
+      "[M-PESA CALLBACK RECEIVED]",
+      JSON.stringify(req.body, null, 2)
+    );
+
+    const callbackData =
+      req.body?.Body?.stkCallback;
+
+    if (!callbackData) {
+      console.error(
+        "[CALLBACK ERROR] Invalid callback format."
+      );
+
+      return res.status(200).json({
+        ResultCode: 0,
+        ResultDesc: "Accepted"
+      });
+    }
+
+    const resultCode =
+      callbackData.ResultCode;
+
+    const resultDesc =
+      callbackData.ResultDesc;
+
+    console.log(
+      `[M-PESA CALLBACK] ResultCode: ${resultCode}`
+    );
+
+    console.log(
+      `[M-PESA CALLBACK] ResultDesc: ${resultDesc}`
+    );
+
+    if (Number(resultCode) === 0) {
+      const metadata =
+        callbackData.CallbackMetadata?.Item || [];
+
+      const amount =
+        metadata.find(
+          item => item.Name === "Amount"
+        )?.Value;
+
+      const receipt =
+        metadata.find(
+          item =>
+            item.Name === "MpesaReceiptNumber"
+        )?.Value;
+
+      const phone =
+        metadata.find(
+          item => item.Name === "PhoneNumber"
+        )?.Value;
+
+      const transactionDate =
+        metadata.find(
+          item =>
+            item.Name === "TransactionDate"
+        )?.Value;
+
+      console.log(
+        "[PAYMENT SUCCESS]",
+        {
+          receipt,
+          amount,
+          phone,
+          transactionDate
+        }
+      );
+
+    } else {
+      console.log(
+        "[PAYMENT FAILED]",
+        {
+          resultCode,
+          resultDesc
+        }
+      );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMPORTANT
+    |--------------------------------------------------------------------------
+    |
+    | Always acknowledge the Safaricom callback.
+    |
+    */
+
+    return res.status(200).json({
+      ResultCode: 0,
+      ResultDesc: "Accepted"
+    });
+
+  } catch (error) {
+    console.error(
+      "[CALLBACK ERROR]",
+      error
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Still acknowledge the callback.
+    |--------------------------------------------------------------------------
+    */
+
+    return res.status(200).json({
+      ResultCode: 0,
+      ResultDesc: "Accepted"
+    });
   }
-
-  const resultCode = callbackData.ResultCode;
-  const resultDesc = callbackData.ResultDesc;
-
-  if (resultCode === 0) {
-    const metadata = callbackData.CallbackMetadata?.Item || [];
-    const amount = metadata.find(i => i.Name === 'Amount')?.Value;
-    const receipt = metadata.find(i => i.Name === 'MpesaReceiptNumber')?.Value;
-    const phone = metadata.find(i => i.Name === 'PhoneNumber')?.Value;
-
-    console.log(`[SUCCESS] Receipt: ${receipt} | $ ${amount} | Phone: ${phone}`);
-  } else {
-    console.log(`[FAILED] Code: ${resultCode} - ${resultDesc}`);
-  }
-
-  return res.status(200).json({ ResultCode: 0, ResultDesc: 'Accepted' });
 });
 
-app.listen(PORT, () => {
-  console.log(`[${ENV.toUpperCase()}] Sandbox STK Server running at http://localhost:${PORT}`);
+/*
+|--------------------------------------------------------------------------
+| 404 HANDLER FOR API ROUTES
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "API endpoint not found."
+  });
 });
+
+/*
+|--------------------------------------------------------------------------
+| ERROR HANDLER
+|--------------------------------------------------------------------------
+*/
+
+app.use((err, req, res, next) => {
+  console.error("[EXPRESS ERROR]", err);
+
+  res.status(500).json({
+    success: false,
+    message: "Internal server error."
+  });
+});
+
+/*
+|--------------------------------------------------------------------------
+| VERCEL EXPORT
+|--------------------------------------------------------------------------
+|
+| DO NOT USE app.listen() ON VERCEL.
+|
+*/
+
+module.exports = app;
