@@ -10,8 +10,9 @@
 
   <style>
     /* =========================================
-       GLOBAL & BRAND THEME (WORKAWAY INTERNATIONAL)
+       GLOBAL & BRAND THEME
        ========================================= */
+
     :root {
       --primary-blue: #003B95;
       --secondary-blue: #00225D;
@@ -23,7 +24,8 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
       background-color: var(--light-bg);
       color: var(--text-dark);
       margin: 0;
@@ -46,6 +48,7 @@
     /* =========================================
        HEADER & LOGO
        ========================================= */
+
     .header {
       text-align: center;
       margin-bottom: 25px;
@@ -91,80 +94,47 @@
 
     /* =========================================
        PAYMENT BRAND ICONS
+       EXTERNAL URLS - NO LOCAL ICON FILES
        ========================================= */
+
     .payment-brand-icons {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
       margin: 18px 0 24px;
+      width: 100%;
       flex-wrap: nowrap;
     }
 
     .payment-brand {
-      height: 42px;
-      min-width: 72px;
-      padding: 0 12px;
-      border-radius: 7px;
+      width: 78px;
+      height: 44px;
+      padding: 6px 9px;
+      background: #ffffff;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
-      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
-      background: #ffffff;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.07);
+      flex-shrink: 0;
     }
 
-    /* M-PESA */
-    .mpesa-brand {
-      border: 1.5px solid #00A651;
-      color: #00A651;
-      gap: 4px;
-    }
-
-    .mpesa-symbol {
-      font-size: 20px;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .mpesa-text {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-    }
-
-    /* AMERICAN EXPRESS */
-    .amex-brand {
-      background: #006FCF;
-      border: 1.5px solid #006FCF;
-      color: #ffffff;
-      text-align: center;
-    }
-
-    .amex-text {
-      font-size: 8px;
-      line-height: 9px;
-      font-weight: 900;
-      letter-spacing: 0.4px;
-    }
-
-    /* VISA */
-    .visa-brand {
-      background: #ffffff;
-      border: 1.5px solid #D9DEE7;
-      color: #1434CB;
-    }
-
-    .visa-text {
-      font-size: 21px;
-      font-style: italic;
-      font-weight: 900;
-      letter-spacing: -1px;
+    .payment-brand img {
+      max-width: 100%;
+      max-height: 30px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
     }
 
     /* =========================================
        PAYMENT METHOD SELECTOR
        ========================================= */
+
     .payment-methods {
       margin-bottom: 25px;
     }
@@ -246,8 +216,9 @@
     }
 
     /* =========================================
-       PAYMENT PANELS & FORM INPUTS
+       PAYMENT PANELS
        ========================================= */
+
     .payment-panel {
       display: none;
       margin-top: 15px;
@@ -256,6 +227,10 @@
     .payment-panel.active {
       display: block;
     }
+
+    /* =========================================
+       FORM INPUTS
+       ========================================= */
 
     .form-group {
       margin-bottom: 15px;
@@ -284,6 +259,10 @@
       border-color: var(--primary-blue);
     }
 
+    /* =========================================
+       PAYMENT INFORMATION
+       ========================================= */
+
     .payment-info {
       background: var(--light-bg);
       border-left: 4px solid var(--accent-red);
@@ -302,6 +281,7 @@
     /* =========================================
        BUTTONS
        ========================================= */
+
     button[type="submit"],
     #cardPayBtn,
     #bankPayBtn,
@@ -345,6 +325,7 @@
     /* =========================================
        CARD PAYMENT
        ========================================= */
+
     .card-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -354,6 +335,7 @@
     /* =========================================
        PAYMENT SUMMARY
        ========================================= */
+
     .payment-summary {
       border-top: 2px dashed var(--border-color);
       margin-top: 25px;
@@ -381,7 +363,10 @@
       color: var(--accent-red);
     }
 
-    /* Helper utility classes */
+    /* =========================================
+       HELPER
+       ========================================= */
+
     .hidden {
       display: none !important;
     }
@@ -389,7 +374,16 @@
     /* =========================================
        RESPONSIVE
        ========================================= */
+
     @media (max-width: 600px) {
+
+      .container {
+        margin: 10px auto;
+      }
+
+      .card {
+        padding: 22px 18px;
+      }
 
       .payment-options {
         grid-template-columns: 1fr;
@@ -399,17 +393,20 @@
         grid-template-columns: 1fr;
       }
 
+      /* Keep logos horizontal on mobile */
       .payment-brand-icons {
-        gap: 8px;
+        gap: 6px;
+        overflow: hidden;
       }
 
       .payment-brand {
-        min-width: 65px;
-        padding: 0 8px;
+        width: 68px;
+        height: 40px;
+        padding: 5px 7px;
       }
 
-      .mpesa-text {
-        font-size: 10px;
+      .payment-brand img {
+        max-height: 26px;
       }
     }
   </style>
@@ -421,10 +418,14 @@
 
     <div class="card">
 
-      <!-- HEADER -->
+      <!-- =========================================
+           HEADER
+           ========================================= -->
+
       <div class="header">
 
         <!-- WORKAWAY INTERNATIONAL LOGO -->
+
         <div class="brand-logo-container">
 
           <img
@@ -435,6 +436,7 @@
           >
 
           <!-- FALLBACK INLINE SVG LOGO -->
+
           <svg
             id="svgLogo"
             style="display:none; max-width:220px;"
@@ -442,6 +444,7 @@
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+
             <path
               d="M45 25 C30 25 20 40 20 60 C20 80 30 95 45 95 C60 95 70 80 70 60 C70 40 60 25 45 25 Z"
               fill="#003B95"
@@ -476,6 +479,7 @@
             >
               INTERNATIONAL
             </text>
+
           </svg>
 
         </div>
@@ -491,26 +495,60 @@
 
         <!-- =========================================
              PAYMENT BRAND ICONS
+             LOADED FROM EXTERNAL URLS
              ========================================= -->
+
         <div class="payment-brand-icons">
 
           <!-- M-PESA -->
-          <div class="payment-brand mpesa-brand">
-            <span class="mpesa-symbol">M</span>
-            <span class="mpesa-text">M-PESA</span>
+
+          <div class="payment-brand">
+
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/1/15/M-PESA_LOGO-01.svg"
+              alt="M-Pesa"
+              loading="lazy"
+            >
+
           </div>
+
 
           <!-- AMERICAN EXPRESS -->
-          <div class="payment-brand amex-brand">
-            <span class="amex-text">
-              AMERICAN<br>
-              EXPRESS
-            </span>
+
+          <div class="payment-brand">
+
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg"
+              alt="American Express"
+              loading="lazy"
+            >
+
           </div>
 
+
           <!-- VISA -->
-          <div class="payment-brand visa-brand">
-            <span class="visa-text">VISA</span>
+
+          <div class="payment-brand">
+
+            <img
+              src="https://www.logo.wine/a/logo/Visa_Inc./Visa_Inc.-Logo.wine.svg"
+              alt="Visa"
+              loading="lazy"
+            >
+
+          </div>
+
+
+          <!-- MASTERCARD -->
+
+          <div class="payment-brand">
+
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+              alt="Mastercard"
+              loading="lazy"
+            >
+
           </div>
 
         </div>
@@ -521,6 +559,7 @@
       <!-- =========================================
            PAYMENT METHODS
            ========================================= -->
+
       <div class="payment-methods">
 
         <h3>Payment Method</h3>
@@ -528,7 +567,11 @@
         <div class="payment-options">
 
           <!-- M-PESA -->
-          <label class="payment-option selected" data-method="mpesa">
+
+          <label
+            class="payment-option selected"
+            data-method="mpesa"
+          >
 
             <input
               type="radio"
@@ -551,7 +594,11 @@
 
 
           <!-- CARD -->
-          <label class="payment-option" data-method="card">
+
+          <label
+            class="payment-option"
+            data-method="card"
+          >
 
             <input
               type="radio"
@@ -566,14 +613,18 @@
             </span>
 
             <span class="payment-description">
-              Debit /Credit
+              Debit / Credit
             </span>
 
           </label>
 
 
           <!-- BANK -->
-          <label class="payment-option" data-method="bank">
+
+          <label
+            class="payment-option"
+            data-method="bank"
+          >
 
             <input
               type="radio"
@@ -595,7 +646,11 @@
 
 
           <!-- APPLE PAY -->
-          <label class="payment-option" data-method="cash">
+
+          <label
+            class="payment-option"
+            data-method="cash"
+          >
 
             <input
               type="radio"
@@ -611,7 +666,8 @@
               Apple Pay
             </span>
 
-            <span class="payment-description"></span>
+            <span class="payment-description">
+            </span>
 
           </label>
 
@@ -623,7 +679,11 @@
       <!-- =========================================
            M-PESA PANEL
            ========================================= -->
-      <div id="mpesaPanel" class="payment-panel active">
+
+      <div
+        id="mpesaPanel"
+        class="payment-panel active"
+      >
 
         <form id="stkForm">
 
@@ -641,7 +701,6 @@
             >
 
           </div>
-
           <button
             type="submit"
             id="submitBtn"
@@ -651,10 +710,12 @@
 
         </form>
 
+
         <div
           id="statusAlert"
           class="status-alert hidden"
         ></div>
+
 
         <div
           id="queryContainer"
@@ -678,7 +739,11 @@
       <!-- =========================================
            CARD PANEL
            ========================================= -->
-      <div id="cardPanel" class="payment-panel">
+
+      <div
+        id="cardPanel"
+        class="payment-panel"
+      >
 
         <div class="form-group">
 
@@ -771,7 +836,11 @@
       <!-- =========================================
            BANK TRANSFER PANEL
            ========================================= -->
-      <div id="bankPanel" class="payment-panel">
+
+      <div
+        id="bankPanel"
+        class="payment-panel"
+      >
 
         <div class="payment-info">
 
@@ -782,6 +851,7 @@
           <br><br>
 
           Bank:
+
           <strong>
             Example Bank
           </strong>
@@ -789,6 +859,7 @@
           <br>
 
           Account Name:
+
           <strong>
             WORKAWAY INTERNATIONAL
           </strong>
@@ -796,6 +867,7 @@
           <br>
 
           Account Number:
+
           <strong>
             0000000000
           </strong>
@@ -821,7 +893,11 @@
       <!-- =========================================
            APPLE PAY PANEL
            ========================================= -->
-      <div id="cashPanel" class="payment-panel">
+
+      <div
+        id="cashPanel"
+        class="payment-panel"
+      >
 
         <div class="payment-info">
 
@@ -844,6 +920,7 @@
       <!-- =========================================
            ORDER SUMMARY
            ========================================= -->
+
       <div class="payment-summary">
 
         <div class="summary-row">
@@ -881,12 +958,14 @@
   <!-- =========================================
        ORIGINAL JAVASCRIPT
        ========================================= -->
+
   <script src="/js/app.js"></script>
 
 
   <!-- =========================================
        PAYMENT METHOD UI
        ========================================= -->
+
   <script>
 
     const paymentOptions =
@@ -1007,7 +1086,7 @@
 
 
     /* =========================================
-       FRONT-END BUTTON HANDLERS
+       CARD BUTTON
        ========================================= */
 
     document
@@ -1021,6 +1100,10 @@
       });
 
 
+    /* =========================================
+       BANK BUTTON
+       ========================================= */
+
     document
       .getElementById("bankPayBtn")
       .addEventListener("click", function () {
@@ -1031,6 +1114,10 @@
 
       });
 
+
+    /* =========================================
+       APPLE PAY BUTTON
+       ========================================= */
 
     document
       .getElementById("cashPayBtn")
