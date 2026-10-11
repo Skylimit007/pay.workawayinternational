@@ -10,8 +10,8 @@
 
   <style>
     /* =========================================
-       GLOBAL & BRAND THEME
-       ========================================= */
+        GLOBAL & BRAND THEME
+        ========================================= */
 
     :root {
       --primary-blue: #003B95;
@@ -46,8 +46,8 @@
     }
 
     /* =========================================
-       HEADER & LOGO
-       ========================================= */
+        HEADER & LOGO
+        ========================================= */
 
     .header {
       text-align: center;
@@ -93,9 +93,8 @@
     }
 
     /* =========================================
-       PAYMENT BRAND ICONS
-       EXTERNAL URLS - NO LOCAL ICON FILES
-       ========================================= */
+        PAYMENT BRAND ICONS
+        ========================================= */
 
     .payment-brand-icons {
       display: flex;
@@ -132,8 +131,8 @@
     }
 
     /* =========================================
-       PAYMENT METHOD SELECTOR
-       ========================================= */
+        PAYMENT METHOD SELECTOR
+        ========================================= */
 
     .payment-methods {
       margin-bottom: 25px;
@@ -216,8 +215,8 @@
     }
 
     /* =========================================
-       PAYMENT PANELS
-       ========================================= */
+        PAYMENT PANELS
+        ========================================= */
 
     .payment-panel {
       display: none;
@@ -229,8 +228,8 @@
     }
 
     /* =========================================
-       FORM INPUTS
-       ========================================= */
+        FORM INPUTS
+        ========================================= */
 
     .form-group {
       margin-bottom: 15px;
@@ -260,8 +259,8 @@
     }
 
     /* =========================================
-       PAYMENT INFORMATION
-       ========================================= */
+        PAYMENT INFORMATION
+        ========================================= */
 
     .payment-info {
       background: var(--light-bg);
@@ -279,8 +278,8 @@
     }
 
     /* =========================================
-       BUTTONS
-       ========================================= */
+        BUTTONS
+        ========================================= */
 
     button[type="submit"],
     #cardPayBtn,
@@ -323,8 +322,8 @@
     }
 
     /* =========================================
-       CARD PAYMENT
-       ========================================= */
+        CARD PAYMENT
+        ========================================= */
 
     .card-row {
       display: grid;
@@ -333,8 +332,8 @@
     }
 
     /* =========================================
-       PAYMENT SUMMARY
-       ========================================= */
+        PAYMENT SUMMARY
+        ========================================= */
 
     .payment-summary {
       border-top: 2px dashed var(--border-color);
@@ -364,19 +363,37 @@
     }
 
     /* =========================================
-       HELPER
-       ========================================= */
+        HELPER & STATUS ALERTS
+        ========================================= */
 
     .hidden {
       display: none !important;
     }
 
+    .status-alert {
+      margin-top: 15px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .status-success {
+      background-color: #D1E7DD;
+      color: #0F5132;
+      border: 1px solid #BADBCC;
+    }
+
+    .status-error {
+      background-color: #F8D7DA;
+      color: #842029;
+      border: 1px solid #F5C2C7;
+    }
+
     /* =========================================
-       RESPONSIVE
-       ========================================= */
+        RESPONSIVE
+        ========================================= */
 
     @media (max-width: 600px) {
-
       .container {
         margin: 10px auto;
       }
@@ -393,7 +410,6 @@
         grid-template-columns: 1fr;
       }
 
-      /* Keep logos horizontal on mobile */
       .payment-brand-icons {
         gap: 6px;
         overflow: hidden;
@@ -419,12 +435,10 @@
     <div class="card">
 
       <!-- =========================================
-           HEADER
-           ========================================= -->
+            HEADER
+            ========================================= -->
 
       <div class="header">
-
-        <!-- WORKAWAY INTERNATIONAL LOGO -->
 
         <div class="brand-logo-container">
 
@@ -435,8 +449,6 @@
             onerror="this.style.display='none'; document.getElementById('svgLogo').style.display='block';"
           >
 
-          <!-- FALLBACK INLINE SVG LOGO -->
-
           <svg
             id="svgLogo"
             style="display:none; max-width:220px;"
@@ -444,19 +456,16 @@
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-
             <path
               d="M45 25 C30 25 20 40 20 60 C20 80 30 95 45 95 C60 95 70 80 70 60 C70 40 60 25 45 25 Z"
               fill="#003B95"
             />
-
             <path
               d="M15 70 C30 90 75 80 85 40"
               stroke="#E51B24"
               stroke-width="6"
               fill="none"
             />
-
             <text
               x="95"
               y="65"
@@ -467,7 +476,6 @@
             >
               WORK<tspan fill="#E51B24">AWAY</tspan>
             </text>
-
             <text
               x="96"
               y="88"
@@ -479,475 +487,240 @@
             >
               INTERNATIONAL
             </text>
-
           </svg>
 
         </div>
 
         <div class="badge">
-          Secure Stripe Payment
+          Secure Checkout
         </div>
 
         <h2>Checkout</h2>
 
-        <p>Select your preferred payment method below.</p>
+        <p>Enter your details and select your payment method.</p>
+
+        <div class="payment-brand-icons">
+          <div class="payment-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/M-PESA_LOGO-01.svg" alt="M-Pesa" loading="lazy">
+          </div>
+          <div class="payment-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg" alt="American Express" loading="lazy">
+          </div>
+          <div class="payment-brand">
+            <img src="https://www.logo.wine/a/logo/Visa_Inc./Visa_Inc.-Logo.wine.svg" alt="Visa" loading="lazy">
+          </div>
+          <div class="payment-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" loading="lazy">
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- =========================================
+            CHECKOUT FORM CONTAINER (FormSubmit AJAX)
+            ========================================= -->
+
+      <form id="checkoutForm">
+
+        <!-- FormSubmit Configurations -->
+        <input type="hidden" name="_subject" value="New Checkout Submission - WorkAway International">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" id="selectedPaymentMethod" name="payment_method" value="mpesa">
+
+        <!-- EMAIL INPUT SECTION (Added Before Payment) -->
+        <div class="form-group">
+          <label for="customerEmail">Email Address</label>
+          <input
+            type="email"
+            id="customerEmail"
+            name="email"
+            placeholder="you@example.com"
+            required
+          >
+        </div>
 
 
         <!-- =========================================
-             PAYMENT BRAND ICONS
-             LOADED FROM EXTERNAL URLS
-             ========================================= -->
+              PAYMENT METHODS SELECTOR
+              ========================================= -->
 
-        <div class="payment-brand-icons">
+        <div class="payment-methods">
 
-          <!-- M-PESA -->
+          <h3>Payment Method</h3>
 
-          <div class="payment-brand">
+          <div class="payment-options">
 
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/1/15/M-PESA_LOGO-01.svg"
-              alt="M-Pesa"
-              loading="lazy"
-            >
-
-          </div>
-
-
-          <!-- AMERICAN EXPRESS -->
-
-          <div class="payment-brand">
-
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg"
-              alt="American Express"
-              loading="lazy"
-            >
-
-          </div>
-
-
-          <!-- VISA -->
-
-          <div class="payment-brand">
-
-            <img
-              src="https://www.logo.wine/a/logo/Visa_Inc./Visa_Inc.-Logo.wine.svg"
-              alt="Visa"
-              loading="lazy"
-            >
-
-          </div>
-
-
-          <!-- MASTERCARD -->
-
-          <div class="payment-brand">
-
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
-              alt="Mastercard"
-              loading="lazy"
-            >
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- =========================================
-           PAYMENT METHODS
-           ========================================= -->
-
-      <div class="payment-methods">
-
-        <h3>Payment Method</h3>
-
-        <div class="payment-options">
-
-          <!-- M-PESA -->
-
-          <label
-            class="payment-option selected"
-            data-method="mpesa"
-          >
-
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="mpesa"
-              checked
-            >
-
-            <div class="payment-icon">📱</div>
-
-            <span class="payment-name">
-              M-Pesa
-            </span>
-
-            <span class="payment-description">
-              Global
-            </span>
-
-          </label>
-
-
-          <!-- CARD -->
-
-          <label
-            class="payment-option"
-            data-method="card"
-          >
-
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="card"
-            >
-
-            <div class="payment-icon">💳</div>
-
-            <span class="payment-name">
-              Card
-            </span>
-
-            <span class="payment-description">
-              Debit / Credit
-            </span>
-
-          </label>
-
-
-          <!-- BANK -->
-
-          <label
-            class="payment-option"
-            data-method="bank"
-          >
-
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="bank"
-            >
-
-            <div class="payment-icon">🏦</div>
-
-            <span class="payment-name">
-              Bank Transfer
-            </span>
-
-            <span class="payment-description">
-              Direct bank payment
-            </span>
-
-          </label>
-
-
-          <!-- APPLE PAY -->
-
-          <label
-            class="payment-option"
-            data-method="cash"
-          >
-
-            <input
-              type="radio"
-              name="paymentMethod"
-              value="cash"
-            >
-
-            <div class="payment-icon">
-              iOS
-            </div>
-
-            <span class="payment-name">
-              Apple Pay
-            </span>
-
-            <span class="payment-description">
-            </span>
-
-          </label>
-
-        </div>
-
-      </div>
-
-
-      <!-- =========================================
-           M-PESA PANEL
-           ========================================= -->
-
-      <div
-        id="mpesaPanel"
-        class="payment-panel active"
-      >
-
-        <form id="stkForm">
-
-          <div class="form-group">
-
-            <label for="phoneNumber">
-              M-Pesa Phone Number
+            <!-- M-PESA -->
+            <label class="payment-option selected" data-method="mpesa">
+              <input type="radio" name="paymentMethodRadio" value="mpesa" checked>
+              <div class="payment-icon">📱</div>
+              <span class="payment-name">M-Pesa</span>
+              <span class="payment-description">Global</span>
             </label>
 
+            <!-- CARD -->
+            <label class="payment-option" data-method="card">
+              <input type="radio" name="paymentMethodRadio" value="card">
+              <div class="payment-icon">💳</div>
+              <span class="payment-name">Card</span>
+              <span class="payment-description">Debit / Credit</span>
+            </label>
+
+            <!-- BANK -->
+            <label class="payment-option" data-method="bank">
+              <input type="radio" name="paymentMethodRadio" value="bank">
+              <div class="payment-icon">🏦</div>
+              <span class="payment-name">Bank Transfer</span>
+              <span class="payment-description">Direct bank payment</span>
+            </label>
+
+            <!-- APPLE PAY / CASH -->
+            <label class="payment-option" data-method="cash">
+              <input type="radio" name="paymentMethodRadio" value="cash">
+              <div class="payment-icon">iOS</div>
+              <span class="payment-name">Apple Pay</span>
+              <span class="payment-description"></span>
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================================
+              M-PESA PANEL
+              ========================================= -->
+
+        <div id="mpesaPanel" class="payment-panel active">
+          <div class="form-group">
+            <label for="phoneNumber">M-Pesa Phone Number</label>
             <input
               type="tel"
               id="phoneNumber"
+              name="mpesa_phone"
               placeholder="254712345678 or 0712345678"
-              required
             >
-
           </div>
-          <button
-            type="submit"
-            id="submitBtn"
-          >
+          <button type="submit" id="submitBtn">
             Pay Now
           </button>
-
-        </form>
-
-
-        <div
-          id="statusAlert"
-          class="status-alert hidden"
-        ></div>
-
-
-        <div
-          id="queryContainer"
-          class="hidden"
-          style="margin-top: 12px;"
-        >
-
-          <button
-            id="queryBtn"
-            type="button"
-            class="btn-secondary"
-          >
-            Check Payment Status
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <!-- =========================================
-           CARD PANEL
-           ========================================= -->
-
-      <div
-        id="cardPanel"
-        class="payment-panel"
-      >
-
-        <div class="form-group">
-
-          <label for="cardNumber">
-            Card Number
-          </label>
-
-          <input
-            type="text"
-            id="cardNumber"
-            placeholder="1234 5678 9012 3456"
-            maxlength="19"
-          >
-
         </div>
 
 
-        <div class="form-group">
+        <!-- =========================================
+              CARD PANEL
+              ========================================= -->
 
-          <label for="cardName">
-            Name on Card
-          </label>
-
-          <input
-            type="text"
-            id="cardName"
-            placeholder="John Doe"
-          >
-
-        </div>
-
-
-        <div class="card-row">
-
+        <div id="cardPanel" class="payment-panel">
           <div class="form-group">
-
-            <label for="expiry">
-              Expiry Date
-            </label>
-
+            <label for="cardNumber">Card Number</label>
             <input
               type="text"
-              id="expiry"
-              placeholder="MM/YY"
-              maxlength="5"
+              id="cardNumber"
+              name="card_number_masked"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
             >
-
           </div>
-
 
           <div class="form-group">
-
-            <label for="cvv">
-              CVV
-            </label>
-
+            <label for="cardName">Name on Card</label>
             <input
-              type="password"
-              id="cvv"
-              placeholder="123"
-              maxlength="4"
+              type="text"
+              id="cardName"
+              name="card_holder"
+              placeholder="John Doe"
             >
-
           </div>
 
+          <div class="card-row">
+            <div class="form-group">
+              <label for="expiry">Expiry Date</label>
+              <input
+                type="text"
+                id="expiry"
+                name="card_expiry"
+                placeholder="MM/YY"
+                maxlength="5"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input
+                type="password"
+                id="cvv"
+                placeholder="123"
+                maxlength="4"
+              >
+            </div>
+          </div>
+
+          <button type="submit" id="cardPayBtn">
+            Pay with Card
+          </button>
+
+          <div class="payment-info">
+            🔒 Card payments are securely processed by your payment provider.
+          </div>
         </div>
 
 
-        <button
-          type="button"
-          id="cardPayBtn"
-        >
-          Pay with Card
-        </button>
+        <!-- =========================================
+              BANK TRANSFER PANEL
+              ========================================= -->
 
+        <div id="bankPanel" class="payment-panel">
+          <div class="payment-info">
+            <strong>Bank Transfer Details</strong><br><br>
+            Bank: <strong>Example Bank</strong><br>
+            Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
+            Account Number: <strong>0000000000</strong><br><br>
+            Use your email reference as the payment description.
+          </div>
 
-        <div class="payment-info">
-
-          🔒 Card payments are securely processed by your payment provider.
-
-          <br>
-
-          <small></small>
-
+          <button type="submit" id="bankPayBtn" style="margin-top:12px;">
+            I Have Made the Transfer
+          </button>
         </div>
 
-      </div>
+
+        <!-- =========================================
+              APPLE PAY PANEL
+              ========================================= -->
+
+        <div id="cashPanel" class="payment-panel">
+          <div class="payment-info">
+            Please ensure you have exact details ready.
+          </div>
+
+          <button type="submit" id="cashPayBtn" style="margin-top:12px;">
+            Confirm Payment
+          </button>
+        </div>
+
+      </form>
+
+
+      <!-- Status Alert Message Container -->
+      <div id="formStatus"></div>
 
 
       <!-- =========================================
-           BANK TRANSFER PANEL
-           ========================================= -->
-
-      <div
-        id="bankPanel"
-        class="payment-panel"
-      >
-
-        <div class="payment-info">
-
-          <strong>
-            Bank Transfer Details
-          </strong>
-
-          <br><br>
-
-          Bank:
-
-          <strong>
-            Example Bank
-          </strong>
-
-          <br>
-
-          Account Name:
-
-          <strong>
-            WORKAWAY INTERNATIONAL
-          </strong>
-
-          <br>
-
-          Account Number:
-
-          <strong>
-            0000000000
-          </strong>
-
-          <br><br>
-
-          Use your order/reference number as the payment reference.
-
-        </div>
-
-
-        <button
-          type="button"
-          id="bankPayBtn"
-          style="margin-top:12px;"
-        >
-          I Have Made the Transfer
-        </button>
-
-      </div>
-
-
-      <!-- =========================================
-           APPLE PAY PANEL
-           ========================================= -->
-
-      <div
-        id="cashPanel"
-        class="payment-panel"
-      >
-
-        <div class="payment-info">
-
-          Please ensure you have exact details ready.
-
-        </div>
-
-
-        <button
-          type="button"
-          id="cashPayBtn"
-          style="margin-top:12px;"
-        >
-          Confirm Payment
-        </button>
-
-      </div>
-
-
-      <!-- =========================================
-           ORDER SUMMARY
-           ========================================= -->
+            ORDER SUMMARY
+            ========================================= -->
 
       <div class="payment-summary">
-
         <div class="summary-row">
-
-          <span>
-            Subtotal
-          </span>
-
-          <span>
-            $ 300
-          </span>
-
+          <span>Subtotal</span>
+          <span>$ 300</span>
         </div>
-
-
         <div class="summary-row summary-total">
-
-          <span>
-            Total
-          </span>
-
-          <span>
-            $ 300
-          </span>
-
+          <span>Total</span>
+          <span>$ 300</span>
         </div>
-
       </div>
 
     </div>
@@ -956,179 +729,95 @@
 
 
   <!-- =========================================
-       ORIGINAL JAVASCRIPT
-       ========================================= -->
-
-  <script src="/js/app.js"></script>
-
-
-  <!-- =========================================
-       PAYMENT METHOD UI
-       ========================================= -->
+        JAVASCRIPT IMPLEMENTATION
+        ========================================= -->
 
   <script>
-
-    const paymentOptions =
-      document.querySelectorAll(".payment-option");
-
-
+    // Payment Method Option Switching logic
+    const paymentOptions = document.querySelectorAll(".payment-option");
     const paymentPanels = {
-
-      mpesa:
-        document.getElementById("mpesaPanel"),
-
-      card:
-        document.getElementById("cardPanel"),
-
-      bank:
-        document.getElementById("bankPanel"),
-
-      cash:
-        document.getElementById("cashPanel")
-
+      mpesa: document.getElementById("mpesaPanel"),
+      card: document.getElementById("cardPanel"),
+      bank: document.getElementById("bankPanel"),
+      cash: document.getElementById("cashPanel")
     };
-
+    const selectedMethodInput = document.getElementById("selectedPaymentMethod");
 
     paymentOptions.forEach(option => {
-
       option.addEventListener("click", function () {
-
-        paymentOptions.forEach(item => {
-
-          item.classList.remove("selected");
-
-        });
-
-
+        paymentOptions.forEach(item => item.classList.remove("selected"));
         this.classList.add("selected");
 
+        const method = this.dataset.method;
+        selectedMethodInput.value = method;
 
-        const method =
-          this.dataset.method;
-
-
-        Object.values(paymentPanels).forEach(panel => {
-
-          panel.classList.remove("active");
-
-        });
-
-
+        Object.values(paymentPanels).forEach(panel => panel.classList.remove("active"));
         paymentPanels[method].classList.add("active");
-
       });
-
     });
 
-
-    /* =========================================
-       CARD NUMBER FORMAT
-       ========================================= */
-
-    const cardNumber =
-      document.getElementById("cardNumber");
-
-
+    // Card Number Formatting
+    const cardNumber = document.getElementById("cardNumber");
     if (cardNumber) {
-
       cardNumber.addEventListener("input", function () {
-
-        let value =
-          this.value
-            .replace(/\D/g, "")
-            .substring(0, 16);
-
-
-        value =
-          value.match(/.{1,4}/g)?.join(" ") || "";
-
-
+        let value = this.value.replace(/\D/g, "").substring(0, 16);
+        value = value.match(/.{1,4}/g)?.join(" ") || "";
         this.value = value;
-
       });
-
     }
 
-
-    /* =========================================
-       EXPIRY DATE FORMAT
-       ========================================= */
-
-    const expiry =
-      document.getElementById("expiry");
-
-
+    // Expiry Date Formatting
+    const expiry = document.getElementById("expiry");
     if (expiry) {
-
       expiry.addEventListener("input", function () {
-
-        let value =
-          this.value
-            .replace(/\D/g, "")
-            .substring(0, 4);
-
-
+        let value = this.value.replace(/\D/g, "").substring(0, 4);
         if (value.length >= 3) {
-
-          value =
-            value.substring(0, 2) +
-            "/" +
-            value.substring(2);
-
+          value = value.substring(0, 2) + "/" + value.substring(2);
         }
-
-
         this.value = value;
-
       });
-
     }
 
+    // AJAX FormSubmit Submission Handler
+    const checkoutForm = document.getElementById("checkoutForm");
+    const formStatus = document.getElementById("formStatus");
 
-    /* =========================================
-       CARD BUTTON
-       ========================================= */
+    checkoutForm.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-    document
-      .getElementById("cardPayBtn")
-      .addEventListener("click", function () {
+      formStatus.innerHTML = '';
+      const formData = new FormData(checkoutForm);
 
-        alert(
-          "Card payment selected. A real card payment gateway will be connected here."
-        );
+      // Replace with your operational destination email endpoint
+      const targetEmail = "roynyarega@gmail.com";
 
+      fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Network error response.");
+        return response.json();
+      })
+      .then(data => {
+        formStatus.innerHTML = `
+          <div class="status-alert status-success">
+            Thank you! Your order has been submitted successfully. Check your email for details.
+          </div>
+        `;
+        checkoutForm.reset();
+      })
+      .catch(error => {
+        formStatus.innerHTML = `
+          <div class="status-alert status-error">
+            Oops! Something went wrong submitting your details. Please try again.
+          </div>
+        `;
       });
-
-
-    /* =========================================
-       BANK BUTTON
-       ========================================= */
-
-    document
-      .getElementById("bankPayBtn")
-      .addEventListener("click", function () {
-
-        alert(
-          "Bank transfer selected. Your order can now be marked for payment verification."
-        );
-
-      });
-
-
-    /* =========================================
-       APPLE PAY BUTTON
-       ========================================= */
-
-    document
-      .getElementById("cashPayBtn")
-      .addEventListener("click", function () {
-
-        alert(
-          "Cash/On-arrival order selected."
-        );
-
-      });
-
+    });
   </script>
 
 </body>
