@@ -1981,13 +1981,16 @@
   <!-- FormSubmit AJAX email gate. The existing M-Pesa STK logic in /js/app.js is left intact. -->
   <script>
     (function () {
-      const FORM_SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/roynyarega@gmail.com";
+      const FORM_SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/YOUR_RECEIVING_EMAIL@example.com";
       const emailForm = document.getElementById("emailForm");
       const emailInput = document.getElementById("customerEmail");
       const saveEmailBtn = document.getElementById("saveEmailBtn");
       const emailStatus = document.getElementById("emailStatus");
       const stkForm = document.getElementById("stkForm");
       const stkButton = document.getElementById("submitBtn");
+
+      // Keep the existing page layout and payment flow; only gate STK Push until email succeeds.
+      stkButton.disabled = true;
 
       let emailConfirmed = false;
       let confirmedEmail = "";
