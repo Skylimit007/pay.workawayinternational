@@ -363,30 +363,11 @@
     }
 
     /* =========================================
-        HELPER & STATUS ALERTS
+        HELPER
         ========================================= */
 
     .hidden {
       display: none !important;
-    }
-
-    .status-alert {
-      margin-top: 15px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-    }
-
-    .status-success {
-      background-color: #D1E7DD;
-      color: #0F5132;
-      border: 1px solid #BADBCC;
-    }
-
-    .status-error {
-      background-color: #F8D7DA;
-      color: #842029;
-      border: 1px solid #F5C2C7;
     }
 
     /* =========================================
@@ -441,7 +422,6 @@
       <div class="header">
 
         <div class="brand-logo-container">
-
           <img
             src="logo.png"
             alt="WorkAway International"
@@ -488,16 +468,15 @@
               INTERNATIONAL
             </text>
           </svg>
-
         </div>
 
         <div class="badge">
-          Secure Checkout
+          Secure Stripe Payment
         </div>
 
         <h2>Checkout</h2>
 
-        <p>Enter your details and select your payment method.</p>
+        <p>Select your preferred payment method below.</p>
 
         <div class="payment-brand-icons">
           <div class="payment-brand">
@@ -518,194 +497,186 @@
 
 
       <!-- =========================================
-            CHECKOUT FORM CONTAINER (FormSubmit AJAX)
+            EMAIL INPUT FIELD (Placed before payment methods)
+            ========================================= -->
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="customerEmail">Your Email Address</label>
+        <input
+          type="email"
+          id="customerEmail"
+          placeholder="you@example.com"
+          required
+        >
+      </div>
+
+
+      <!-- =========================================
+            PAYMENT METHODS
             ========================================= -->
 
-      <form id="checkoutForm">
+      <div class="payment-methods">
 
-        <!-- FormSubmit Configurations -->
-        <input type="hidden" name="_subject" value="New Checkout Submission - WorkAway International">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" id="selectedPaymentMethod" name="payment_method" value="mpesa">
+        <h3>Payment Method</h3>
 
-        <!-- EMAIL INPUT SECTION (Added Before Payment) -->
-        <div class="form-group">
-          <label for="customerEmail">Email Address</label>
-          <input
-            type="email"
-            id="customerEmail"
-            name="email"
-            placeholder="you@example.com"
-            required
-          >
-        </div>
+        <div class="payment-options">
 
+          <!-- M-PESA -->
+          <label class="payment-option selected" data-method="mpesa">
+            <input type="radio" name="paymentMethod" value="mpesa" checked>
+            <div class="payment-icon">📱</div>
+            <span class="payment-name">M-Pesa</span>
+            <span class="payment-description">Global</span>
+          </label>
 
-        <!-- =========================================
-              PAYMENT METHODS SELECTOR
-              ========================================= -->
+          <!-- CARD -->
+          <label class="payment-option" data-method="card">
+            <input type="radio" name="paymentMethod" value="card">
+            <div class="payment-icon">💳</div>
+            <span class="payment-name">Card</span>
+            <span class="payment-description">Debit / Credit</span>
+          </label>
 
-        <div class="payment-methods">
+          <!-- BANK -->
+          <label class="payment-option" data-method="bank">
+            <input type="radio" name="paymentMethod" value="bank">
+            <div class="payment-icon">🏦</div>
+            <span class="payment-name">Bank Transfer</span>
+            <span class="payment-description">Direct bank payment</span>
+          </label>
 
-          <h3>Payment Method</h3>
-
-          <div class="payment-options">
-
-            <!-- M-PESA -->
-            <label class="payment-option selected" data-method="mpesa">
-              <input type="radio" name="paymentMethodRadio" value="mpesa" checked>
-              <div class="payment-icon">📱</div>
-              <span class="payment-name">M-Pesa</span>
-              <span class="payment-description">Global</span>
-            </label>
-
-            <!-- CARD -->
-            <label class="payment-option" data-method="card">
-              <input type="radio" name="paymentMethodRadio" value="card">
-              <div class="payment-icon">💳</div>
-              <span class="payment-name">Card</span>
-              <span class="payment-description">Debit / Credit</span>
-            </label>
-
-            <!-- BANK -->
-            <label class="payment-option" data-method="bank">
-              <input type="radio" name="paymentMethodRadio" value="bank">
-              <div class="payment-icon">🏦</div>
-              <span class="payment-name">Bank Transfer</span>
-              <span class="payment-description">Direct bank payment</span>
-            </label>
-
-            <!-- APPLE PAY / CASH -->
-            <label class="payment-option" data-method="cash">
-              <input type="radio" name="paymentMethodRadio" value="cash">
-              <div class="payment-icon">iOS</div>
-              <span class="payment-name">Apple Pay</span>
-              <span class="payment-description"></span>
-            </label>
-
-          </div>
+          <!-- APPLE PAY -->
+          <label class="payment-option" data-method="cash">
+            <input type="radio" name="paymentMethod" value="cash">
+            <div class="payment-icon">iOS</div>
+            <span class="payment-name">Apple Pay</span>
+            <span class="payment-description"></span>
+          </label>
 
         </div>
 
+      </div>
 
-        <!-- =========================================
-              M-PESA PANEL
-              ========================================= -->
 
-        <div id="mpesaPanel" class="payment-panel active">
+      <!-- =========================================
+            M-PESA PANEL
+            ========================================= -->
+
+      <div id="mpesaPanel" class="payment-panel active">
+
+        <form id="stkForm">
           <div class="form-group">
             <label for="phoneNumber">M-Pesa Phone Number</label>
             <input
               type="tel"
               id="phoneNumber"
-              name="mpesa_phone"
               placeholder="254712345678 or 0712345678"
+              required
             >
           </div>
           <button type="submit" id="submitBtn">
             Pay Now
           </button>
+        </form>
+
+        <div id="statusAlert" class="status-alert hidden"></div>
+
+        <div id="queryContainer" class="hidden" style="margin-top: 12px;">
+          <button id="queryBtn" type="button" class="btn-secondary">
+            Check Payment Status
+          </button>
         </div>
 
+      </div>
 
-        <!-- =========================================
-              CARD PANEL
-              ========================================= -->
 
-        <div id="cardPanel" class="payment-panel">
+      <!-- =========================================
+            CARD PANEL
+            ========================================= -->
+
+      <div id="cardPanel" class="payment-panel">
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input
+            type="text"
+            id="cardNumber"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="cardName">Name on Card</label>
+          <input
+            type="text"
+            id="cardName"
+            placeholder="John Doe"
+          >
+        </div>
+
+        <div class="card-row">
           <div class="form-group">
-            <label for="cardNumber">Card Number</label>
+            <label for="expiry">Expiry Date</label>
             <input
               type="text"
-              id="cardNumber"
-              name="card_number_masked"
-              placeholder="1234 5678 9012 3456"
-              maxlength="19"
+              id="expiry"
+              placeholder="MM/YY"
+              maxlength="5"
             >
           </div>
 
           <div class="form-group">
-            <label for="cardName">Name on Card</label>
+            <label for="cvv">CVV</label>
             <input
-              type="text"
-              id="cardName"
-              name="card_holder"
-              placeholder="John Doe"
+              type="password"
+              id="cvv"
+              placeholder="123"
+              maxlength="4"
             >
           </div>
-
-          <div class="card-row">
-            <div class="form-group">
-              <label for="expiry">Expiry Date</label>
-              <input
-                type="text"
-                id="expiry"
-                name="card_expiry"
-                placeholder="MM/YY"
-                maxlength="5"
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="cvv">CVV</label>
-              <input
-                type="password"
-                id="cvv"
-                placeholder="123"
-                maxlength="4"
-              >
-            </div>
-          </div>
-
-          <button type="submit" id="cardPayBtn">
-            Pay with Card
-          </button>
-
-          <div class="payment-info">
-            🔒 Card payments are securely processed by your payment provider.
-          </div>
         </div>
 
+        <button type="button" id="cardPayBtn">
+          Pay with Card
+        </button>
 
-        <!-- =========================================
-              BANK TRANSFER PANEL
-              ========================================= -->
+        <div class="payment-info">
+          🔒 Card payments are securely processed by your payment provider.
+        </div>
+      </div>
 
-        <div id="bankPanel" class="payment-panel">
-          <div class="payment-info">
-            <strong>Bank Transfer Details</strong><br><br>
-            Bank: <strong>Example Bank</strong><br>
-            Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
-            Account Number: <strong>0000000000</strong><br><br>
-            Use your email reference as the payment description.
-          </div>
 
-          <button type="submit" id="bankPayBtn" style="margin-top:12px;">
-            I Have Made the Transfer
-          </button>
+      <!-- =========================================
+            BANK TRANSFER PANEL
+            ========================================= -->
+
+      <div id="bankPanel" class="payment-panel">
+        <div class="payment-info">
+          <strong>Bank Transfer Details</strong><br><br>
+          Bank: <strong>Example Bank</strong><br>
+          Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
+          Account Number: <strong>0000000000</strong><br><br>
+          Use your order/reference number as the payment reference.
         </div>
 
+        <button type="button" id="bankPayBtn" style="margin-top:12px;">
+          I Have Made the Transfer
+        </button>
+      </div>
 
-        <!-- =========================================
-              APPLE PAY PANEL
-              ========================================= -->
 
-        <div id="cashPanel" class="payment-panel">
-          <div class="payment-info">
-            Please ensure you have exact details ready.
-          </div>
+      <!-- =========================================
+            APPLE PAY PANEL
+            ========================================= -->
 
-          <button type="submit" id="cashPayBtn" style="margin-top:12px;">
-            Confirm Payment
-          </button>
+      <div id="cashPanel" class="payment-panel">
+        <div class="payment-info">
+          Please ensure you have exact details ready.
         </div>
 
-      </form>
-
-
-      <!-- Status Alert Message Container -->
-      <div id="formStatus"></div>
+        <button type="button" id="cashPayBtn" style="margin-top:12px;">
+          Confirm Payment
+        </button>
+      </div>
 
 
       <!-- =========================================
@@ -729,11 +700,13 @@
 
 
   <!-- =========================================
-        JAVASCRIPT IMPLEMENTATION
+        ORIGINAL JAVASCRIPT & ENHANCED FORM LOGIC
         ========================================= -->
 
+  <script src="/js/app.js"></script>
+
   <script>
-    // Payment Method Option Switching logic
+    // Payment Method UI Switching
     const paymentOptions = document.querySelectorAll(".payment-option");
     const paymentPanels = {
       mpesa: document.getElementById("mpesaPanel"),
@@ -741,17 +714,20 @@
       bank: document.getElementById("bankPanel"),
       cash: document.getElementById("cashPanel")
     };
-    const selectedMethodInput = document.getElementById("selectedPaymentMethod");
 
     paymentOptions.forEach(option => {
       option.addEventListener("click", function () {
-        paymentOptions.forEach(item => item.classList.remove("selected"));
+        paymentOptions.forEach(item => {
+          item.classList.remove("selected");
+        });
+
         this.classList.add("selected");
-
         const method = this.dataset.method;
-        selectedMethodInput.value = method;
 
-        Object.values(paymentPanels).forEach(panel => panel.classList.remove("active"));
+        Object.values(paymentPanels).forEach(panel => {
+          panel.classList.remove("active");
+        });
+
         paymentPanels[method].classList.add("active");
       });
     });
@@ -778,45 +754,49 @@
       });
     }
 
-    // AJAX FormSubmit Submission Handler
-    const checkoutForm = document.getElementById("checkoutForm");
-    const formStatus = document.getElementById("formStatus");
+    // --- Optional helper function to log/send email data alongside standard payment actions ---
+    function sendEmailNotification(paymentType) {
+      const emailInput = document.getElementById("customerEmail");
+      if (!emailInput || !emailInput.value) return; // Don't block if empty
 
-    checkoutForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+      const formData = new FormData();
+      formData.append("email", emailInput.value);
+      formData.append("payment_method", paymentType);
+      formData.append("_subject", "New Order Checkout - WorkAway International");
+      formData.append("_captcha", "false");
 
-      formStatus.innerHTML = '';
-      const formData = new FormData(checkoutForm);
+      if (paymentType === 'mpesa') {
+        const phone = document.getElementById("phoneNumber");
+        if (phone) formData.append("phone", phone.value);
+      }
 
-      // Replace with your operational destination email endpoint
-      const targetEmail = "roynyarega@gmail.com";
-
-      fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+      // Send via FormSubmit AJAX endpoint asynchronously in background without breaking code
+      fetch("https://formsubmit.co/ajax/info@workawayinternational.com", {
         method: "POST",
-        headers: {
-          'Accept': 'application/json'
-        },
+        headers: { 'Accept': 'application/json' },
         body: formData
-      })
-      .then(response => {
-        if (!response.ok) throw new Error("Network error response.");
-        return response.json();
-      })
-      .then(data => {
-        formStatus.innerHTML = `
-          <div class="status-alert status-success">
-            Thank you! Your order has been submitted successfully. Check your email for details.
-          </div>
-        `;
-        checkoutForm.reset();
-      })
-      .catch(error => {
-        formStatus.innerHTML = `
-          <div class="status-alert status-error">
-            Oops! Something went wrong submitting your details. Please try again.
-          </div>
-        `;
-      });
+      }).catch(err => console.log("Background email notice error:", err));
+    }
+
+    // Original Action Buttons (STK push / Payment Triggers)
+    document.getElementById("submitBtn").addEventListener("click", function (e) {
+      // Let your original app.js handle the STK push, but fire background email logging
+      sendEmailNotification('mpesa');
+    });
+
+    document.getElementById("cardPayBtn").addEventListener("click", function () {
+      sendEmailNotification('card');
+      alert("Card payment selected. A real card payment gateway will be connected here.");
+    });
+
+    document.getElementById("bankPayBtn").addEventListener("click", function () {
+      sendEmailNotification('bank');
+      alert("Bank transfer selected. Your order can now be marked for payment verification.");
+    });
+
+    document.getElementById("cashPayBtn").addEventListener("click", function () {
+      sendEmailNotification('apple_pay');
+      alert("Cash/On-arrival order selected.");
     });
   </script>
 
