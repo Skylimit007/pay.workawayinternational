@@ -2310,7 +2310,7 @@
       const stkForm = document.getElementById("stkForm");
       // IMPORTANT: replace the placeholder below with your receiving email address.
       // Example: https://formsubmit.co/ajax/admin@yourdomain.com
-      const FORM_SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/roynyarega.com";
+      const FORM_SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/roynyarega@gmail.com";
       let verifiedEmail = "";
 
       function setEmailStatus(message, type) {
@@ -2331,7 +2331,7 @@
           emailInput.reportValidity();
           return;
         }
-        if (FORM_SUBMIT_ENDPOINT.includes("YOUR_RECEIVING_EMAIL@example.com")) {
+        if (FORM_SUBMIT_ENDPOINT.includes("roynyarega@gmail.com")) {
           setEmailStatus("FormSubmit is not configured. Please contact the site administrator.", "error");
           return;
         }
