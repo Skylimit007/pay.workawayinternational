@@ -19,13 +19,13 @@
       color: #222;
     }
 
-    .checkout {
+    .checkout-container {
       max-width: 620px;
       margin: 0 auto;
       padding: 24px;
       background: #fff;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     h1, h2 {
@@ -64,7 +64,7 @@
     }
 
     button:disabled {
-      opacity: .6;
+      opacity: 0.6;
       cursor: wait;
     }
 
@@ -91,7 +91,7 @@
       background: #f0faf5;
     }
 
-    .payment-option input {
+    .payment-option input[type="radio"] {
       width: auto;
       min-height: auto;
       margin-right: 6px;
@@ -139,6 +139,12 @@
       font-weight: 700;
     }
 
+    #emailStatus,
+    #stkStatus {
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
     .email-success {
       color: #087443;
     }
@@ -147,13 +153,8 @@
       color: #b42318;
     }
 
-    #emailStatus {
-      margin-top: 10px;
-      line-height: 1.5;
-    }
-
     @media (max-width: 480px) {
-      .checkout {
+      .checkout-container {
         padding: 18px;
       }
 
@@ -165,392 +166,453 @@
 </head>
 
 <body>
-  <main class="checkout">
-    <h1>WorkAway International</h1>
-    <h2>Checkout</h2>
 
-    <div class="payment-info">
-      Review your order and choose a payment method below.
+<div class="checkout-container">
+
+  <h1>WorkAway International</h1>
+  <h2>Checkout</h2>
+
+  <!-- EMAIL CAPTURE -->
+  <div id="emailCapture">
+    <div class="form-group">
+      <label for="customerEmail">Email Address</label>
+      <input
+        type="email"
+        id="customerEmail"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      >
     </div>
 
-    <!-- EMAIL CAPTURE -->
-    <section id="emailCapture">
-      <h2>Contact Email</h2>
+    <button type="button" id="submitEmailBtn" class="full-width">
+      Submit Email
+    </button>
+
+    <p id="emailStatus" role="status" aria-live="polite">
+      Submit your email address before proceeding.
+    </p>
+  </div>
+
+  <!-- PAYMENT METHOD SELECTOR -->
+  <div class="payment-options">
+
+    <label class="payment-option selected" data-method="mpesa">
+      <input
+        type="radio"
+        name="paymentMethod"
+        value="mpesa"
+        checked
+      >
+      M-Pesa
+    </label>
+
+    <label class="payment-option" data-method="card">
+      <input type="radio" name="paymentMethod" value="card">
+      Card
+    </label>
+
+    <label class="payment-option" data-method="bank">
+      <input type="radio" name="paymentMethod" value="bank">
+      Bank Transfer
+    </label>
+
+    <label class="payment-option" data-method="cash">
+      <input type="radio" name="paymentMethod" value="cash">
+      Apple Pay
+    </label>
+
+  </div>
+
+  <!-- M-PESA PANEL -->
+  <div id="mpesaPanel" class="payment-panel active">
+
+    <h2>M-Pesa Payment</h2>
+
+    <form id="stkForm">
 
       <div class="form-group">
-        <label for="customerEmail">Email address</label>
+        <label for="phone">M-Pesa Phone Number</label>
         <input
-          type="email"
-          id="customerEmail"
-          name="email"
-          placeholder="you@example.com"
-          autocomplete="email"
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="2547XXXXXXXX"
+          autocomplete="tel"
           required
         >
       </div>
 
-      <button
-        type="button"
-        id="submitEmailBtn"
-        class="full-width"
-      >
-        Submit Email
+      <!--
+        Preserve the field IDs used by your existing app.js.
+        Populate these from the actual hotspot login context.
+      -->
+      <input type="hidden" id="ip" name="ip">
+      <input type="hidden" id="mac" name="mac">
+
+      <button type="submit" id="stkPayBtn" class="full-width">
+        Pay with M-Pesa
       </button>
 
-      <p id="emailStatus" role="status" aria-live="polite">
-        Submit your email address before proceeding.
-      </p>
-    </section>
+      <p id="stkStatus" role="status" aria-live="polite"></p>
 
-    <hr>
+    </form>
 
-    <!-- PAYMENT METHOD SELECTOR -->
-    <h2>Payment Method</h2>
-
-    <div class="payment-options">
-      <label class="payment-option selected" data-method="mpesa">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="mpesa"
-          checked
-        >
-        M-Pesa
-      </label>
-
-      <label class="payment-option" data-method="card">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="card"
-        >
-        Card
-      </label>
-
-      <label class="payment-option" data-method="bank">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="bank"
-        >
-        Bank Transfer
-      </label>
-
-      <label class="payment-option" data-method="cash">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="cash"
-        >
-        Apple Pay
-      </label>
+    <div class="payment-info">
+      Enter your M-Pesa number and continue to request a payment prompt.
+      Confirm the transaction on your phone.
     </div>
 
-    <!-- M-PESA FORM -->
-    <section id="mpesaPanel" class="payment-panel active">
-      <h2>M-Pesa Payment</h2>
+  </div>
 
-      <form id="stkForm">
-        <div class="form-group">
-          <label for="phone">M-Pesa phone number</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            placeholder="2547XXXXXXXX"
-            autocomplete="tel"
-            required
-          >
-        </div>
+  <!-- CARD PANEL -->
+  <div id="cardPanel" class="payment-panel">
 
-        <div class="form-group">
-          <label for="packageId">Package</label>
-          <select id="packageId" name="packageId" required>
-            <option value="">Select a package</option>
-            <option value="1h">1 Hour - KSh 20</option>
-            <option value="5h">5 Hours - KSh 50</option>
-            <option value="24h">24 Hours - KSh 100</option>
-          </select>
-        </div>
+    <h2>Card Payment</h2>
 
-        <!--
-          The existing app.js may require the hotspot client's
-          IP address and MAC address. Populate these from trusted
-          hotspot/router context; do not assume they are optional.
-        -->
-        <input type="hidden" id="ip" name="ip">
-        <input type="hidden" id="mac" name="mac">
+    <div class="form-group">
+      <label for="cardNumber">Card Number</label>
+      <input
+        type="text"
+        id="cardNumber"
+        placeholder="1234 5678 9012 3456"
+        maxlength="19"
+        autocomplete="off"
+      >
+    </div>
 
-        <button
-          type="submit"
-          id="stkPayBtn"
-          class="full-width"
+    <div class="form-group">
+      <label for="cardName">Name on Card</label>
+      <input
+        type="text"
+        id="cardName"
+        placeholder="John Doe"
+        autocomplete="off"
+      >
+    </div>
+
+    <div class="card-row">
+      <div class="form-group">
+        <label for="expiry">Expiry Date</label>
+        <input
+          type="text"
+          id="expiry"
+          placeholder="MM/YY"
+          maxlength="5"
+          autocomplete="off"
         >
-          Pay with M-Pesa
-        </button>
-
-        <p id="stkStatus" role="status" aria-live="polite"></p>
-      </form>
-
-      <div class="payment-info">
-        You will receive an M-Pesa payment prompt on your phone.
-        Confirm the transaction on your device.
-      </div>
-    </section>
-
-    <!-- CARD PANEL -->
-    <section id="cardPanel" class="payment-panel">
-      <h2>Card Payment</h2>
-
-      <div class="payment-info">
-        Card payments are not enabled yet. Use a supported,
-        secure payment provider's hosted checkout when available.
       </div>
 
-      <!-- Do not collect real card details using this demo form. -->
-      <button type="button" id="cardPayBtn" class="full-width">
-        Card payments unavailable
-      </button>
-    </section>
-
-    <!-- BANK TRANSFER PANEL -->
-    <section id="bankPanel" class="payment-panel">
-      <h2>Bank Transfer</h2>
-
-      <div class="payment-info">
-        <strong>Bank transfer details</strong><br>
-        Bank: Replace with your verified bank name<br>
-        Account name: WORKAWAY INTERNATIONAL<br>
-        Account number: Replace with your verified account number<br><br>
-        Use your order/reference number as the payment reference.
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input
+          type="password"
+          id="cvv"
+          placeholder="123"
+          maxlength="4"
+          autocomplete="off"
+        >
       </div>
+    </div>
 
-      <p>
-        Only mark a bank transfer as paid after independently
-        verifying that the funds have arrived.
-      </p>
+    <button type="button" id="cardPayBtn">
+      Pay with Card
+    </button>
 
-      <button type="button" id="bankPayBtn" class="full-width">
-        Bank transfer instructions
-      </button>
-    </section>
+    <div class="payment-info">
+      Card payments require a supported payment provider.
+      Do not enter real card details until secure hosted checkout
+      has been integrated.
+    </div>
 
-    <!-- APPLE PAY PANEL -->
-    <section id="cashPanel" class="payment-panel">
-      <h2>Apple Pay</h2>
+  </div>
 
-      <div class="payment-info">
-        Apple Pay requires integration with a supported payment
-        provider. It is not active on this page yet.
-      </div>
+  <!-- BANK TRANSFER PANEL -->
+  <div id="bankPanel" class="payment-panel">
 
-      <button type="button" id="cashPayBtn" class="full-width">
-        Apple Pay unavailable
-      </button>
-    </section>
+    <div class="payment-info">
+      <strong>Bank Transfer Details</strong><br><br>
+      Bank: <strong>Example Bank</strong><br>
+      Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
+      Account Number: <strong>0000000000</strong><br><br>
+      Use your order/reference number as the payment reference.
+    </div>
 
-    <!-- ORDER SUMMARY -->
-    <section class="payment-summary">
-      <h2>Order Summary</h2>
+    <button type="button" id="bankPayBtn" style="margin-top:12px">
+      I Have Made the Transfer
+    </button>
 
-      <div class="summary-row">
-        <span>Subtotal</span>
-        <span>$300.00</span>
-      </div>
+  </div>
 
-      <div class="summary-row summary-total">
-        <span>Total</span>
-        <span>$300.00</span>
-      </div>
+  <!-- APPLE PAY PANEL -->
+  <div id="cashPanel" class="payment-panel">
 
-      <p>
-        The displayed total is illustrative. Confirm the actual
-        product price, currency, and amount with your backend.
-      </p>
-    </section>
-  </main>
+    <div class="payment-info">
+      Apple Pay must be connected to a supported payment provider
+      before payments can be processed.
+    </div>
 
-  <!-- Existing M-Pesa integration -->
-  <script src="/js/app.js"></script>
+    <button type="button" id="cashPayBtn" style="margin-top:12px">
+      Confirm Payment
+    </button>
 
-  <!-- PAYMENT METHOD UI -->
-  <script>
-  (() => {
-    "use strict";
+  </div>
 
-    const options = document.querySelectorAll(".payment-option");
+  <!-- ORDER SUMMARY -->
+  <div class="payment-summary">
 
-    const panels = {
-      mpesa: document.getElementById("mpesaPanel"),
-      card: document.getElementById("cardPanel"),
-      bank: document.getElementById("bankPanel"),
-      cash: document.getElementById("cashPanel")
-    };
+    <div class="summary-row">
+      <span>Subtotal</span>
+      <span>$ 300</span>
+    </div>
 
-    options.forEach(option => {
-      option.addEventListener("click", () => {
-        const method = option.dataset.method;
+    <div class="summary-row summary-total">
+      <span>Total</span>
+      <span>$ 300</span>
+    </div>
 
-        if (!panels[method]) return;
+  </div>
 
-        options.forEach(item => {
-          item.classList.remove("selected");
+</div>
 
-          const radio = item.querySelector('input[type="radio"]');
-          if (radio) {
-            radio.checked = item === option;
-          }
-        });
+<!-- EXISTING M-PESA INTEGRATION -->
+<script src="/js/app.js"></script>
 
-        Object.values(panels).forEach(panel => {
-          panel.classList.remove("active");
-        });
+<!-- PAYMENT METHOD UI -->
+<script>
+(() => {
+  "use strict";
 
-        option.classList.add("selected");
-        panels[method].classList.add("active");
+  const paymentOptions =
+    document.querySelectorAll(".payment-option");
+
+  const paymentPanels = {
+    mpesa: document.getElementById("mpesaPanel"),
+    card: document.getElementById("cardPanel"),
+    bank: document.getElementById("bankPanel"),
+    cash: document.getElementById("cashPanel")
+  };
+
+  paymentOptions.forEach(option => {
+    option.addEventListener("click", () => {
+      const method = option.dataset.method;
+
+      if (!paymentPanels[method]) return;
+
+      paymentOptions.forEach(item => {
+        item.classList.remove("selected");
+
+        const radio = item.querySelector('input[type="radio"]');
+
+        if (radio) {
+          radio.checked = item === option;
+        }
       });
+
+      Object.values(paymentPanels).forEach(panel => {
+        panel.classList.remove("active");
+      });
+
+      option.classList.add("selected");
+      paymentPanels[method].classList.add("active");
     });
+  });
 
-    document.getElementById("cardPayBtn").addEventListener("click", () => {
-      alert("Card payments have not been integrated yet.");
-    });
+  const cardNumber = document.getElementById("cardNumber");
 
-    document.getElementById("bankPayBtn").addEventListener("click", () => {
-      alert("Follow the verified bank transfer instructions above.");
-    });
+  cardNumber.addEventListener("input", function () {
+    const digits = this.value
+      .replace(/\D/g, "")
+      .substring(0, 16);
 
-    document.getElementById("cashPayBtn").addEventListener("click", () => {
-      alert("Apple Pay has not been integrated yet.");
-    });
-  })();
-  </script>
+    this.value = digits.match(/.{1,4}/g)?.join(" ") || "";
+  });
 
-  <!-- FORMSUBMIT EMAIL CAPTURE AND M-PESA GUARD -->
-  <script>
-  (() => {
-    "use strict";
+  document.getElementById("expiry").addEventListener(
+    "input",
+    function () {
+      let value = this.value
+        .replace(/\D/g, "")
+        .substring(0, 4);
 
-    const RECEIVING_EMAIL = "roynyarega@gmail.com";
-    const ENDPOINT =
-      "https://formsubmit.co/ajax/" + RECEIVING_EMAIL;
+      if (value.length > 2) {
+        value = value.substring(0, 2) + "/" + value.substring(2);
+      }
 
-    const emailInput = document.getElementById("customerEmail");
-    const emailButton = document.getElementById("submitEmailBtn");
-    const emailStatus = document.getElementById("emailStatus");
-    const emailCapture = document.getElementById("emailCapture");
-    const stkForm = document.getElementById("stkForm");
+      this.value = value;
+    }
+  );
 
-    if (
-      !emailInput ||
-      !emailButton ||
-      !emailStatus ||
-      !emailCapture ||
-      !stkForm
-    ) {
-      console.error(
-        "Checkout initialization failed: a required form element is missing."
+  document.getElementById("cardPayBtn").addEventListener(
+    "click",
+    () => {
+      alert(
+        "A supported secure card payment gateway must be connected."
       );
+    }
+  );
+
+  document.getElementById("bankPayBtn").addEventListener(
+    "click",
+    () => {
+      alert(
+        "Verify the bank transfer before marking the order as paid."
+      );
+    }
+  );
+
+  document.getElementById("cashPayBtn").addEventListener(
+    "click",
+    () => {
+      alert(
+        "Apple Pay must be integrated with a supported payment provider."
+      );
+    }
+  );
+})();
+</script>
+
+<!-- FORMSUBMIT EMAIL CAPTURE AND M-PESA SUBMISSION GUARD -->
+<script>
+(() => {
+  "use strict";
+
+  const RECEIVING_EMAIL = "roynyarega@gmail.com";
+
+  const FORM_SUBMIT_ENDPOINT =
+    "https://formsubmit.co/ajax/" + RECEIVING_EMAIL;
+
+  const emailInput = document.getElementById("customerEmail");
+  const emailButton = document.getElementById("submitEmailBtn");
+  const emailStatus = document.getElementById("emailStatus");
+  const emailCapture = document.getElementById("emailCapture");
+  const stkForm = document.getElementById("stkForm");
+
+  const missing = [];
+
+  if (!emailInput) missing.push("customerEmail");
+  if (!emailButton) missing.push("submitEmailBtn");
+  if (!emailStatus) missing.push("emailStatus");
+  if (!emailCapture) missing.push("emailCapture");
+
+  if (missing.length) {
+    console.error(
+      "FormSubmit setup error. Missing HTML elements: " +
+      missing.join(", ")
+    );
+    return;
+  }
+
+  let submittedEmail = "";
+  let submitting = false;
+
+  function showStatus(message, type = "") {
+    emailStatus.textContent = message;
+    emailStatus.className = type ? "email-" + type : "";
+    emailStatus.setAttribute("role", "status");
+    emailStatus.setAttribute("aria-live", "polite");
+  }
+
+  emailInput.addEventListener("input", () => {
+    const currentEmail = emailInput.value.trim().toLowerCase();
+
+    if (currentEmail !== submittedEmail) {
+      submittedEmail = "";
+      showStatus("Submit your email address before proceeding.");
+    }
+  });
+
+  emailButton.addEventListener("click", async event => {
+    event.preventDefault();
+
+    if (submitting) return;
+
+    const email = emailInput.value.trim();
+
+    if (!emailInput.checkValidity()) {
+      emailInput.reportValidity();
       return;
     }
 
-    let submittedEmail = "";
-    let submitting = false;
+    submitting = true;
+    emailButton.disabled = true;
+    emailButton.textContent = "Submitting...";
+    showStatus("Submitting your email...");
 
-    function showStatus(message, type = "") {
-      emailStatus.textContent = message;
-      emailStatus.className = type ? "email-" + type : "";
-      emailStatus.setAttribute("role", "status");
-      emailStatus.setAttribute("aria-live", "polite");
-    }
+    try {
+      const response = await fetch(FORM_SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          _subject: "WorkAway International Checkout Email",
+          _template: "table"
+        })
+      });
 
-    emailInput.addEventListener("input", () => {
-      if (emailInput.value.trim().toLowerCase() !== submittedEmail) {
-        submittedEmail = "";
-        showStatus("Submit your email address before proceeding.");
-      }
-    });
+      const responseText = await response.text();
 
-    emailButton.addEventListener("click", async event => {
-      event.preventDefault();
-
-      if (submitting) return;
-
-      const email = emailInput.value.trim();
-
-      if (!emailInput.checkValidity()) {
-        emailInput.reportValidity();
-        return;
-      }
-
-      submitting = true;
-      emailButton.disabled = true;
-      emailButton.textContent = "Submitting...";
-      showStatus("Submitting your email...");
+      let result;
 
       try {
-        const response = await fetch(ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({
-            email,
-            _subject: "WorkAway International Checkout Email",
-            _template: "table"
-          })
-        });
-
-        const raw = await response.text();
-        let result;
-
-        try {
-          result = JSON.parse(raw);
-        } catch {
-          throw new Error(
-            "Unexpected response from FormSubmit (HTTP " +
-            response.status + ")."
-          );
-        }
-
-        if (
-          !response.ok ||
-          result.success === false ||
-          result.success === "false" ||
-          result.success === 0
-        ) {
-          throw new Error(
-            result.message ||
-            result.error ||
-            "FormSubmit returned HTTP " + response.status
-          );
-        }
-
-        submittedEmail = email.toLowerCase();
-
-        showStatus(
-          "Email submission accepted. You may proceed to M-Pesa.",
-          "success"
+        result = JSON.parse(responseText);
+      } catch {
+        throw new Error(
+          "Unexpected FormSubmit response (HTTP " +
+          response.status + ")."
         );
-      } catch (error) {
-        submittedEmail = "";
-        console.error("FormSubmit error:", error);
-
-        showStatus(
-          "Email submission failed: " + error.message +
-          " Check FormSubmit activation and your browser console.",
-          "error"
-        );
-      } finally {
-        submitting = false;
-        emailButton.disabled = false;
-        emailButton.textContent = "Submit Email";
       }
-    });
 
-    // Block M-Pesa submission unless the current email was submitted.
+      if (
+        !response.ok ||
+        result.success === false ||
+        result.success === "false" ||
+        result.success === 0
+      ) {
+        throw new Error(
+          result.message ||
+          result.error ||
+          "FormSubmit returned HTTP " + response.status
+        );
+      }
+
+      submittedEmail = email.toLowerCase();
+
+      showStatus(
+        "Email submitted successfully. You may proceed with payment.",
+        "success"
+      );
+
+    } catch (error) {
+      submittedEmail = "";
+
+      console.error("FormSubmit submission error:", error);
+
+      showStatus(
+        "Email submission failed: " + error.message +
+        " Check FormSubmit activation, internet access, and the browser console.",
+        "error"
+      );
+
+    } finally {
+      submitting = false;
+      emailButton.disabled = false;
+      emailButton.textContent = "Submit Email";
+    }
+  });
+
+  /*
+   * Block the existing M-Pesa form submit event until the email
+   * has been submitted and the customer has not changed it.
+   */
+  if (stkForm) {
     stkForm.addEventListener("submit", event => {
-      const currentEmail = emailInput.value.trim().toLowerCase();
+      const currentEmail =
+        emailInput.value.trim().toLowerCase();
 
       if (
         !currentEmail ||
@@ -575,7 +637,13 @@
         }
       }
     }, true);
-  })();
-  </script>
+  } else {
+    console.warn(
+      "FormSubmit guard: #stkForm was not found."
+    );
+  }
+})();
+</script>
+
 </body>
 </html>
