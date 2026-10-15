@@ -564,6 +564,20 @@
 
         <h3>Payment Method</h3>
 
+        <!-- Email is required before any payment action can continue. -->
+        <div class="form-group">
+          <label for="customerEmail">Email Address</label>
+          <input
+            type="email"
+            id="customerEmail"
+            name="email"
+            placeholder="Enter your email address"
+            autocomplete="email"
+            required
+          >
+          <small id="emailStatus" role="status" aria-live="polite"></small>
+        </div>
+
         <div class="payment-options">
 
           <!-- M-PESA -->
@@ -1128,6 +1142,149 @@
         );
 
       });
+
+    /* =========================================
+       REQUIRED EMAIL + AJAX FORMSUBMIT
+       =========================================
+       IMPORTANT: Replace FORMSUBMIT_RECIPIENT below with the
+       inbox address that should receive checkout email submissions.
+       FormSubmit may require one-time activation from that inbox.
+       ========================================= */
+
+    const customerEmail = document.getElementById("customerEmail");
+    const emailStatus = document.getElementById("emailStatus");
+    const stkForm = document.getElementById("stkForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    const FORMSUBMIT_RECIPIENT = "roynyagega@gmail.com";
+    let emailSubmittedSuccessfully = false;
+    let emailSubmissionInProgress = false;
+    let pendingPaymentAction = null;
+
+    async function submitEmailWithAjax() {
+      const email = customerEmail.value.trim();
+
+      if (!email) {
+        customerEmail.setCustomValidity("Please enter your email address before paying.");
+        customerEmail.reportValidity();
+        customerEmail.focus();
+        return false;
+      }
+
+      customerEmail.setCustomValidity("");
+      if (!customerEmail.checkValidity()) {
+        customerEmail.reportValidity();
+        customerEmail.focus();
+        return false;
+      }
+
+      if (emailSubmittedSuccessfully) return true;
+      if (emailSubmissionInProgress) return false;
+
+      emailSubmissionInProgress = true;
+      emailStatus.textContent = "Submitting email…";
+      emailStatus.style.color = "var(--text-muted)";
+
+      try {
+        const response = await fetch(
+          "https://formsubmit.co/ajax/" + encodeURIComponent(FORMSUBMIT_RECIPIENT),
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              email: email,
+              _subject: "Checkout email submission",
+              _template: "table",
+              _captcha: "false"
+            })
+          }
+        );
+
+        let result = {};
+        try {
+          result = await response.json();
+        } catch (_) {
+          result = {};
+        }
+
+        if (!response.ok || result.success === "false" || result.success === false) {
+          throw new Error(result.message || "Email submission failed.");
+        }
+
+        emailSubmittedSuccessfully = true;
+        emailStatus.textContent = "Email submitted successfully.";
+        emailStatus.style.color = "#15803d";
+        return true;
+      } catch (error) {
+        emailStatus.textContent =
+          "Could not submit your email. Please check your connection and try again.";
+        emailStatus.style.color = "var(--accent-red)";
+        console.error("FormSubmit AJAX error:", error);
+        return false;
+      } finally {
+        emailSubmissionInProgress = false;
+      }
+    }
+
+    function setPaymentButtonsDisabled(disabled) {
+      [submitBtn, document.getElementById("cardPayBtn"),
+       document.getElementById("bankPayBtn"),
+       document.getElementById("cashPayBtn")].forEach(button => {
+        if (button) button.disabled = disabled;
+      });
+    }
+
+    async function requireEmailBeforePayment(action) {
+      if (emailSubmissionInProgress) return;
+      if (emailSubmittedSuccessfully) {
+        action();
+        return;
+      }
+
+      const ok = await submitEmailWithAjax();
+      if (ok) action();
+    }
+
+    // Prevent M-Pesa form submission until the email has been sent by AJAX.
+    stkForm.addEventListener("submit", function (event) {
+      if (emailSubmittedSuccessfully) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      requireEmailBeforePayment(() => {
+        if (typeof stkForm.requestSubmit === "function") {
+          stkForm.requestSubmit(submitBtn);
+        } else {
+          // Compatibility fallback: dispatch a submit event for older browsers.
+          const submitEvent = new Event("submit", { bubbles: true, cancelable: true });
+          if (stkForm.dispatchEvent(submitEvent)) stkForm.submit();
+        }
+      });
+    }, true);
+
+    // Guard other payment buttons as well, so no payment action starts without email.
+    [
+      document.getElementById("cardPayBtn"),
+      document.getElementById("bankPayBtn"),
+      document.getElementById("cashPayBtn")
+    ].forEach(button => {
+      if (!button) return;
+      button.addEventListener("click", function (event) {
+        if (emailSubmittedSuccessfully) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        requireEmailBeforePayment(() => button.click());
+      }, true);
+    });
+
+    // If the email is edited, require a fresh successful AJAX submission.
+    customerEmail.addEventListener("input", function () {
+      emailSubmittedSuccessfully = false;
+      customerEmail.setCustomValidity("");
+      emailStatus.textContent = "";
+    });
 
   </script>
 
