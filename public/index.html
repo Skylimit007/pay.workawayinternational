@@ -575,6 +575,9 @@
             autocomplete="email"
             required
           >
+          <button type="button" id="submitEmailBtn" style="margin-top:10px;">
+            Submit Email
+          </button>
           <small id="emailStatus" role="status" aria-live="polite"></small>
         </div>
 
@@ -1153,13 +1156,28 @@
 
     const customerEmail = document.getElementById("customerEmail");
     const emailStatus = document.getElementById("emailStatus");
+    const submitEmailBtn = document.getElementById("submitEmailBtn");
     const stkForm = document.getElementById("stkForm");
     const submitBtn = document.getElementById("submitBtn");
 
-    const FORMSUBMIT_RECIPIENT = "roynyagega@gmail.com";
+    const FORMSUBMIT_RECIPIENT = "roynyarega@gmail.com";
     let emailSubmittedSuccessfully = false;
     let emailSubmissionInProgress = false;
-    let pendingPaymentAction = null;
+
+    // Payment is locked until the user explicitly submits the email successfully.
+    function updatePaymentAvailability() {
+      const locked = !emailSubmittedSuccessfully;
+      [submitBtn, document.getElementById("cardPayBtn"),
+       document.getElementById("bankPayBtn"),
+       document.getElementById("cashPayBtn")].forEach(button => {
+        if (button) {
+          button.disabled = locked;
+          button.setAttribute("aria-disabled", String(locked));
+          button.style.opacity = locked ? "0.65" : "";
+          button.style.cursor = locked ? "not-allowed" : "";
+        }
+      });
+    }
 
     async function submitEmailWithAjax() {
       const email = customerEmail.value.trim();
@@ -1215,8 +1233,9 @@
         }
 
         emailSubmittedSuccessfully = true;
-        emailStatus.textContent = "Email submitted successfully.";
+        emailStatus.textContent = "Email submitted successfully. You can now initiate payment.";
         emailStatus.style.color = "#15803d";
+        updatePaymentAvailability();
         return true;
       } catch (error) {
         emailStatus.textContent =
@@ -1229,62 +1248,39 @@
       }
     }
 
-    function setPaymentButtonsDisabled(disabled) {
-      [submitBtn, document.getElementById("cardPayBtn"),
-       document.getElementById("bankPayBtn"),
-       document.getElementById("cashPayBtn")].forEach(button => {
-        if (button) button.disabled = disabled;
-      });
-    }
-
-    async function requireEmailBeforePayment(action) {
+    // The separate button submits the email first. It does not initiate payment.
+    submitEmailBtn.addEventListener("click", async function () {
       if (emailSubmissionInProgress) return;
-      if (emailSubmittedSuccessfully) {
-        action();
-        return;
+      emailSubmittedSuccessfully = false;
+      updatePaymentAvailability();
+      submitEmailBtn.disabled = true;
+      try {
+        await submitEmailWithAjax();
+      } finally {
+        submitEmailBtn.disabled = false;
       }
+    });
 
-      const ok = await submitEmailWithAjax();
-      if (ok) action();
-    }
-
-    // Prevent M-Pesa form submission until the email has been sent by AJAX.
+    // Block STK submission unless the separate email submission succeeded.
     stkForm.addEventListener("submit", function (event) {
       if (emailSubmittedSuccessfully) return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      requireEmailBeforePayment(() => {
-        if (typeof stkForm.requestSubmit === "function") {
-          stkForm.requestSubmit(submitBtn);
-        } else {
-          // Compatibility fallback: dispatch a submit event for older browsers.
-          const submitEvent = new Event("submit", { bubbles: true, cancelable: true });
-          if (stkForm.dispatchEvent(submitEvent)) stkForm.submit();
-        }
-      });
+      emailStatus.textContent = "Please submit your email successfully before initiating payment.";
+      emailStatus.style.color = "var(--accent-red)";
+      customerEmail.focus();
     }, true);
 
-    // Guard other payment buttons as well, so no payment action starts without email.
-    [
-      document.getElementById("cardPayBtn"),
-      document.getElementById("bankPayBtn"),
-      document.getElementById("cashPayBtn")
-    ].forEach(button => {
-      if (!button) return;
-      button.addEventListener("click", function (event) {
-        if (emailSubmittedSuccessfully) return;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        requireEmailBeforePayment(() => button.click());
-      }, true);
-    });
-
-    // If the email is edited, require a fresh successful AJAX submission.
+    // If the email is changed after submission, lock payment again until resubmitted.
     customerEmail.addEventListener("input", function () {
       emailSubmittedSuccessfully = false;
       customerEmail.setCustomValidity("");
       emailStatus.textContent = "";
+      updatePaymentAvailability();
     });
+
+    // Start with all payment actions disabled until email submission succeeds.
+    updatePaymentAvailability();
 
   </script>
 
