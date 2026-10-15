@@ -1,391 +1,80 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WorkAway International - Checkout</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 24px 16px;
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      color: #222;
-    }
-
-    .checkout-container {
-      max-width: 620px;
-      margin: 0 auto;
-      padding: 24px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    h1, h2 {
-      margin-top: 0;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-weight: 600;
-    }
-
-    input, select {
-      width: 100%;
-      min-height: 44px;
-      padding: 11px;
-      border: 1px solid #ccd2da;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    button {
-      min-height: 44px;
-      padding: 11px 16px;
-      border: 0;
-      border-radius: 6px;
-      background: #087443;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .full-width {
-      width: 100%;
-    }
-
-    .payment-options {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin: 20px 0;
-    }
-
-    .payment-option {
-      padding: 14px;
-      border: 1px solid #ccd2da;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .payment-option.selected {
-      border: 2px solid #087443;
-      background: #f0faf5;
-    }
-
-    .payment-option input[type="radio"] {
-      width: auto;
-      min-height: auto;
-      margin-right: 6px;
-    }
-
-    .payment-panel {
-      display: none;
-      padding-top: 12px;
-    }
-
-    .payment-panel.active {
-      display: block;
-    }
-
-    .payment-info {
-      margin: 12px 0;
-      padding: 14px;
-      border-radius: 6px;
-      background: #f2f5f8;
-      line-height: 1.6;
-      overflow-wrap: anywhere;
-    }
-
-    .card-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .payment-summary {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #ddd;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 12px 0;
-    }
-
-    .summary-total {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    #emailStatus,
-    #stkStatus {
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .email-success {
-      color: #087443;
-    }
-
-    .email-error {
-      color: #b42318;
-    }
-
-    @media (max-width: 480px) {
-      .checkout-container {
-        padding: 18px;
-      }
-
-      .payment-options {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="checkout-container">
-
-  <h1>WorkAway International</h1>
-  <h2>Checkout</h2>
-
-  <!-- EMAIL CAPTURE -->
-  <div id="emailCapture">
-    <div class="form-group">
-      <label for="customerEmail">Email Address</label>
-      <input
-        type="email"
-        id="customerEmail"
-        name="email"
-        placeholder="you@example.com"
-        autocomplete="email"
-        required
-      >
-    </div>
-
-    <button type="button" id="submitEmailBtn" class="full-width">
-      Submit Email
-    </button>
-
-    <p id="emailStatus" role="status" aria-live="polite">
-      Submit your email address before proceeding.
-    </p>
-  </div>
-
-  <!-- PAYMENT METHOD SELECTOR -->
-  <div class="payment-options">
-
-    <label class="payment-option selected" data-method="mpesa">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="mpesa"
-        checked
-      >
-      M-Pesa
-    </label>
-
-    <label class="payment-option" data-method="card">
-      <input type="radio" name="paymentMethod" value="card">
-      Card
-    </label>
-
-    <label class="payment-option" data-method="bank">
-      <input type="radio" name="paymentMethod" value="bank">
-      Bank Transfer
-    </label>
-
-    <label class="payment-option" data-method="cash">
-      <input type="radio" name="paymentMethod" value="cash">
-      Apple Pay
-    </label>
-
-  </div>
-
-  <!-- M-PESA PANEL -->
-  <div id="mpesaPanel" class="payment-panel active">
-
-    <h2>M-Pesa Payment</h2>
-
-    <form id="stkForm">
-
-      <div class="form-group">
-        <label for="phone">M-Pesa Phone Number</label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          placeholder="2547XXXXXXXX"
-          autocomplete="tel"
-          required
-        >
+        <input type="text" id="cardNumber"
+               placeholder="1234 5678 9012 3456" maxlength="19">
       </div>
 
-      <!--
-        Preserve the field IDs used by your existing app.js.
-        Populate these from the actual hotspot login context.
-      -->
-      <input type="hidden" id="ip" name="ip">
-      <input type="hidden" id="mac" name="mac">
+      <div class="form-group">
+        <label for="cardName">Name on Card</label>
+        <input type="text" id="cardName" placeholder="John Doe">
+      </div>
 
-      <button type="submit" id="stkPayBtn" class="full-width">
-        Pay with M-Pesa
+      <div class="card-row">
+        <div class="form-group">
+          <label for="expiry">Expiry Date</label>
+          <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+        </div>
+
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input type="password" id="cvv" placeholder="123" maxlength="4">
+        </div>
+      </div>
+
+      <button type="button" id="cardPayBtn">Pay with Card</button>
+
+      <div class="payment-info">
+        🔒 Card payments are securely processed by your payment provider.
+      </div>
+    </div>
+
+    <!-- BANK TRANSFER PANEL -->
+    <div id="bankPanel" class="payment-panel">
+      <div class="payment-info">
+        <strong>Bank Transfer Details</strong><br><br>
+        Bank: <strong>Example Bank</strong><br>
+        Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
+        Account Number: <strong>0000000000</strong><br><br>
+        Use your order/reference number as the payment reference.
+      </div>
+
+      <button type="button" id="bankPayBtn" style="margin-top:12px">
+        I Have Made the Transfer
       </button>
-
-      <p id="stkStatus" role="status" aria-live="polite"></p>
-
-    </form>
-
-    <div class="payment-info">
-      Enter your M-Pesa number and continue to request a payment prompt.
-      Confirm the transaction on your phone.
     </div>
 
-  </div>
-
-  <!-- CARD PANEL -->
-  <div id="cardPanel" class="payment-panel">
-
-    <h2>Card Payment</h2>
-
-    <div class="form-group">
-      <label for="cardNumber">Card Number</label>
-      <input
-        type="text"
-        id="cardNumber"
-        placeholder="1234 5678 9012 3456"
-        maxlength="19"
-        autocomplete="off"
-      >
-    </div>
-
-    <div class="form-group">
-      <label for="cardName">Name on Card</label>
-      <input
-        type="text"
-        id="cardName"
-        placeholder="John Doe"
-        autocomplete="off"
-      >
-    </div>
-
-    <div class="card-row">
-      <div class="form-group">
-        <label for="expiry">Expiry Date</label>
-        <input
-          type="text"
-          id="expiry"
-          placeholder="MM/YY"
-          maxlength="5"
-          autocomplete="off"
-        >
+    <!-- APPLE PAY PANEL -->
+    <div id="cashPanel" class="payment-panel">
+      <div class="payment-info">
+        Please ensure you have exact details ready.
       </div>
 
-      <div class="form-group">
-        <label for="cvv">CVV</label>
-        <input
-          type="password"
-          id="cvv"
-          placeholder="123"
-          maxlength="4"
-          autocomplete="off"
-        >
+      <button type="button" id="cashPayBtn" style="margin-top:12px">
+        Confirm Payment
+      </button>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="payment-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>$ 300</span>
+      </div>
+
+      <div class="summary-row summary-total">
+        <span>Total</span>
+        <span>$ 300</span>
       </div>
     </div>
 
-    <button type="button" id="cardPayBtn">
-      Pay with Card
-    </button>
-
-    <div class="payment-info">
-      Card payments require a supported payment provider.
-      Do not enter real card details until secure hosted checkout
-      has been integrated.
-    </div>
-
   </div>
-
-  <!-- BANK TRANSFER PANEL -->
-  <div id="bankPanel" class="payment-panel">
-
-    <div class="payment-info">
-      <strong>Bank Transfer Details</strong><br><br>
-      Bank: <strong>Example Bank</strong><br>
-      Account Name: <strong>WORKAWAY INTERNATIONAL</strong><br>
-      Account Number: <strong>0000000000</strong><br><br>
-      Use your order/reference number as the payment reference.
-    </div>
-
-    <button type="button" id="bankPayBtn" style="margin-top:12px">
-      I Have Made the Transfer
-    </button>
-
-  </div>
-
-  <!-- APPLE PAY PANEL -->
-  <div id="cashPanel" class="payment-panel">
-
-    <div class="payment-info">
-      Apple Pay must be connected to a supported payment provider
-      before payments can be processed.
-    </div>
-
-    <button type="button" id="cashPayBtn" style="margin-top:12px">
-      Confirm Payment
-    </button>
-
-  </div>
-
-  <!-- ORDER SUMMARY -->
-  <div class="payment-summary">
-
-    <div class="summary-row">
-      <span>Subtotal</span>
-      <span>$ 300</span>
-    </div>
-
-    <div class="summary-row summary-total">
-      <span>Total</span>
-      <span>$ 300</span>
-    </div>
-
-  </div>
-
 </div>
 
-<!-- EXISTING M-PESA INTEGRATION -->
+<!-- EXISTING M-PESA STK PUSH LOGIC -->
 <script src="/js/app.js"></script>
 
 <!-- PAYMENT METHOD UI -->
 <script>
 (() => {
-  "use strict";
-
-  const paymentOptions =
-    document.querySelectorAll(".payment-option");
+  const paymentOptions = document.querySelectorAll(".payment-option");
 
   const paymentPanels = {
     mpesa: document.getElementById("mpesaPanel"),
@@ -396,138 +85,77 @@
 
   paymentOptions.forEach(option => {
     option.addEventListener("click", () => {
-      const method = option.dataset.method;
-
-      if (!paymentPanels[method]) return;
-
-      paymentOptions.forEach(item => {
-        item.classList.remove("selected");
-
-        const radio = item.querySelector('input[type="radio"]');
-
-        if (radio) {
-          radio.checked = item === option;
-        }
-      });
-
-      Object.values(paymentPanels).forEach(panel => {
-        panel.classList.remove("active");
-      });
-
+      paymentOptions.forEach(item => item.classList.remove("selected"));
       option.classList.add("selected");
-      paymentPanels[method].classList.add("active");
+
+      const radio = option.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+
+      Object.values(paymentPanels).forEach(panel =>
+        panel.classList.remove("active")
+      );
+
+      paymentPanels[option.dataset.method].classList.add("active");
     });
   });
 
   const cardNumber = document.getElementById("cardNumber");
 
-  cardNumber.addEventListener("input", function () {
-    const digits = this.value
-      .replace(/\D/g, "")
-      .substring(0, 16);
-
+  cardNumber.addEventListener("input", function() {
+    const digits = this.value.replace(/\D/g, "").substring(0, 16);
     this.value = digits.match(/.{1,4}/g)?.join(" ") || "";
   });
 
-  document.getElementById("expiry").addEventListener(
-    "input",
-    function () {
-      let value = this.value
-        .replace(/\D/g, "")
-        .substring(0, 4);
-
-      if (value.length > 2) {
-        value = value.substring(0, 2) + "/" + value.substring(2);
-      }
-
-      this.value = value;
+  document.getElementById("expiry").addEventListener("input", function() {
+    let value = this.value.replace(/\D/g, "").substring(0, 4);
+    if (value.length > 2) {
+      value = value.substring(0, 2) + "/" + value.substring(2);
     }
-  );
+    this.value = value;
+  });
 
-  document.getElementById("cardPayBtn").addEventListener(
-    "click",
-    () => {
-      alert(
-        "A supported secure card payment gateway must be connected."
-      );
-    }
-  );
+  document.getElementById("cardPayBtn").addEventListener("click", () => {
+    alert("A real card payment gateway must be connected to process card payments.");
+  });
 
-  document.getElementById("bankPayBtn").addEventListener(
-    "click",
-    () => {
-      alert(
-        "Verify the bank transfer before marking the order as paid."
-      );
-    }
-  );
+  document.getElementById("bankPayBtn").addEventListener("click", () => {
+    alert("Bank transfer selected. Verify the payment before marking the order as paid.");
+  });
 
-  document.getElementById("cashPayBtn").addEventListener(
-    "click",
-    () => {
-      alert(
-        "Apple Pay must be integrated with a supported payment provider."
-      );
-    }
-  );
+  document.getElementById("cashPayBtn").addEventListener("click", () => {
+    alert("Apple Pay must be integrated with a supported payment provider to process payments.");
+  });
 })();
 </script>
 
 <!-- FORMSUBMIT EMAIL CAPTURE AND M-PESA SUBMISSION GUARD -->
 <script>
 (() => {
-  "use strict";
-
-  const RECEIVING_EMAIL = "roynyarega@gmail.com";
-
-  const FORM_SUBMIT_ENDPOINT =
-    "https://formsubmit.co/ajax/" + RECEIVING_EMAIL;
-
   const emailInput = document.getElementById("customerEmail");
   const emailButton = document.getElementById("submitEmailBtn");
   const emailStatus = document.getElementById("emailStatus");
   const emailCapture = document.getElementById("emailCapture");
   const stkForm = document.getElementById("stkForm");
 
-  const missing = [];
-
-  if (!emailInput) missing.push("customerEmail");
-  if (!emailButton) missing.push("submitEmailBtn");
-  if (!emailStatus) missing.push("emailStatus");
-  if (!emailCapture) missing.push("emailCapture");
-
-  if (missing.length) {
-    console.error(
-      "FormSubmit setup error. Missing HTML elements: " +
-      missing.join(", ")
-    );
-    return;
-  }
+  const RECEIVING_EMAIL = "roynyarega@gmail.com";
+  const FORM_SUBMIT_ENDPOINT =
+    "https://formsubmit.co/ajax/" + RECEIVING_EMAIL;
 
   let submittedEmail = "";
-  let submitting = false;
 
   function showStatus(message, type = "") {
     emailStatus.textContent = message;
     emailStatus.className = type ? "email-" + type : "";
-    emailStatus.setAttribute("role", "status");
-    emailStatus.setAttribute("aria-live", "polite");
   }
 
   emailInput.addEventListener("input", () => {
-    const currentEmail = emailInput.value.trim().toLowerCase();
-
-    if (currentEmail !== submittedEmail) {
+    if (emailInput.value.trim().toLowerCase() !== submittedEmail) {
       submittedEmail = "";
       showStatus("Submit your email address before proceeding.");
     }
   });
 
-  emailButton.addEventListener("click", async event => {
-    event.preventDefault();
-
-    if (submitting) return;
-
+  emailButton.addEventListener("click", async () => {
     const email = emailInput.value.trim();
 
     if (!emailInput.checkValidity()) {
@@ -535,7 +163,6 @@
       return;
     }
 
-    submitting = true;
     emailButton.disabled = true;
     emailButton.textContent = "Submitting...";
     showStatus("Submitting your email...");
@@ -554,65 +181,47 @@
         })
       });
 
-      const responseText = await response.text();
-
-      let result;
-
-      try {
-        result = JSON.parse(responseText);
-      } catch {
-        throw new Error(
-          "Unexpected FormSubmit response (HTTP " +
-          response.status + ")."
-        );
-      }
+      const result = await response.json();
 
       if (
         !response.ok ||
         result.success === false ||
-        result.success === "false" ||
-        result.success === 0
+        result.success === "false"
       ) {
         throw new Error(
-          result.message ||
-          result.error ||
-          "FormSubmit returned HTTP " + response.status
+          result.message || result.error || "HTTP " + response.status
         );
       }
 
       submittedEmail = email.toLowerCase();
 
       showStatus(
-        "Email submitted successfully. You may proceed with payment.",
+        "Email submitted successfully. You can now proceed with M-Pesa payment.",
         "success"
       );
-
     } catch (error) {
       submittedEmail = "";
 
       console.error("FormSubmit submission error:", error);
 
       showStatus(
-        "Email submission failed: " + error.message +
-        " Check FormSubmit activation, internet access, and the browser console.",
+        "Email submission failed. Check your internet connection and FormSubmit activation, then try again.",
         "error"
       );
-
     } finally {
-      submitting = false;
       emailButton.disabled = false;
       emailButton.textContent = "Submit Email";
     }
   });
 
   /*
-   * Block the existing M-Pesa form submit event until the email
-   * has been submitted and the customer has not changed it.
+   * Capture-phase guard:
+   * prevents the existing STK form handler from running until
+   * the current email has been successfully submitted.
    */
   if (stkForm) {
     stkForm.addEventListener("submit", event => {
-      const currentEmail =
-        emailInput.value.trim().toLowerCase();
+      const currentEmail = emailInput.value.trim().toLowerCase();
 
       if (
         !currentEmail ||
@@ -623,7 +232,7 @@
         event.stopImmediatePropagation();
 
         showStatus(
-          "Please submit a valid email address before starting M-Pesa.",
+          "Please submit a valid email address before starting M-Pesa STK Push.",
           "error"
         );
 
@@ -637,10 +246,6 @@
         }
       }
     }, true);
-  } else {
-    console.warn(
-      "FormSubmit guard: #stkForm was not found."
-    );
   }
 })();
 </script>
